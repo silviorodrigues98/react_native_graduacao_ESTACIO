@@ -204,6 +204,7 @@ const styles = StyleSheet.create({
       android: "#2196F3",
       default: "#007AFF",
     }),
+    textAlign: "center",
   },
   bulletItem: {
     fontSize: 16,
