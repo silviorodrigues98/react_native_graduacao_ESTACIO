@@ -76,7 +76,7 @@ const IndexScreen = () => {
           accessible={true}
           accessibilityLabel="Tela inicial de investimentos"
         >
-          <ThemedView style={styles.content}>
+          <ThemedView style={[styles.content, { marginTop: 80 }]}>
             <ThemedText
               type="title"
               style={styles.title}
