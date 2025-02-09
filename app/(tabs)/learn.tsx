@@ -9,7 +9,7 @@ const AprendizadoScreen = () => {
     <ThemedView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <ThemedView style={styles.content}>
-          <ThemedText type="title" style={styles.title}>
+          <ThemedText type="title" style={[styles.title, { marginTop: 80 }]}>
             Guia de Investimentos em Renda Fixa
           </ThemedText>
 
