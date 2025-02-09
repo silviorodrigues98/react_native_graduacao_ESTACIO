@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, ScrollView, View } from "react-native";
+import { StyleSheet, ScrollView } from "react-native"; // Added Dimensions
 import { ThemedText } from "../../components/ThemedText";
 import { ThemedView } from "../../components/ThemedView";
 import { Collapsible } from "../../components/Collapsible";
@@ -129,33 +129,34 @@ const styles = StyleSheet.create({
   },
   content: {
     width: "100%",
-    maxWidth: 600,
   },
   title: {
-    fontSize: 32, // Increased font size
+    fontSize: 24, // Adjusted font size
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 15, // Adjusted margin
     textAlign: "center",
-    color: "#2e78b7", // Consistent color
+    color: "#2e78b7",
   },
   description: {
-    fontSize: 18, // Increased font size
-    lineHeight: 26, // Adjusted line height
-    marginBottom: 15,
+    fontSize: 14, // Adjusted font size
+    lineHeight: 22, // Adjusted line height
+    marginBottom: 12, // Adjusted margin
   },
   subsectionTitle: {
-    fontSize: 18, // Increased font size
+    fontSize: 14, // Adjusted font size
     fontWeight: "bold",
-    marginTop: 10,
-    marginBottom: 5,
-    color: "#34495e", // Consistent color
+    marginTop: 8, // Adjusted margin
+    marginBottom: 4, // Adjusted margin
+    color: "#34495e",
   },
   collapsible: {
-    marginBottom: 15, // Consistent margin
+    marginBottom: 12, // Adjusted margin
     borderWidth: 1,
     borderColor: "#ddd",
     borderRadius: 5,
+    padding: 10,
     overflow: "hidden",
+    width: "100%",
   },
 });
 
