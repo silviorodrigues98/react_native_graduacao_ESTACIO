@@ -132,19 +132,19 @@ const styles = StyleSheet.create({
     maxWidth: 600,
   },
   title: {
-    fontSize: 28,
+    fontSize: 32, // Increased font size
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
     color: "#2e78b7", // Consistent color
   },
   description: {
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: 18, // Increased font size
+    lineHeight: 26, // Adjusted line height
     marginBottom: 15,
   },
   subsectionTitle: {
-    fontSize: 16,
+    fontSize: 18, // Increased font size
     fontWeight: "bold",
     marginTop: 10,
     marginBottom: 5,
