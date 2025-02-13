@@ -4,37 +4,66 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  View,
 } from "react-native";
 import { ThemedText } from "../../components/ThemedText";
 import { ThemedView } from "../../components/ThemedView";
 
 const SimulacoesScreen = () => {
-  const [investmentType, setInvestmentType] = useState("");
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [initialValue, setInitialValue] = useState("");
-  const [monthlyDeposit, setMonthlyDeposit] = useState("");
-  const [interestRate, setInterestRate] = useState("");
+  const [cdiRate, setCdiRate] = useState("");
+  const [cdiPercentage, setCdiPercentage] = useState("");
   const [period, setPeriod] = useState("");
   const [result, setResult] = useState("");
 
-  const calculateInvestment = () => {
-    // Basic Validation (Expand as Needed)
-    if (!investmentType || !initialValue || !interestRate || !period) {
+  const calculateTaxRate = (months: number) => {
+    if (months <= 6) return 0.225; // até 180 dias
+    if (months <= 12) return 0.2; // 181 a 360 dias
+    if (months <= 24) return 0.175; // 361 a 720 dias
+    return 0.15; // acima de 720 dias
+  };
+
+  const handleOptionSelect = (option: number) => {
+    setSelectedOption(option);
+    // Limpar resultados anteriores quando uma nova opção é selecionada
+    setResult("");
+  };
+
+  const calculateCDB = () => {
+    if (!initialValue || !cdiRate || !cdiPercentage || !period) {
       setResult("Preencha todos os campos.");
       return;
     }
 
-    const initial = parseFloat(initialValue);
-    const monthly = parseFloat(monthlyDeposit || 0); // Default to 0 if empty
-    const rate = parseFloat(interestRate) / 100 / 12; // Monthly rate
-    const time = parseInt(period);
+    const principal = parseFloat(initialValue);
+    const cdi = parseFloat(cdiRate) / 100;
+    const percentage = parseFloat(cdiPercentage) / 100;
+    const months = parseInt(period);
 
-    let finalValue = initial;
+    // Taxa efetiva
+    const effectiveRate = (cdi * percentage) / 12;
 
-    for (let i = 0; i < time; i++) {
-      finalValue = (finalValue + monthly) * (1 + rate);
-    }
+    // Montante bruto
+    const grossAmount = principal * Math.pow(1 + effectiveRate, months);
 
-    setResult(`Resultado: R$ ${finalValue.toFixed(2)}`);
+    // Rendimento
+    const income = grossAmount - principal;
+
+    // Imposto
+    const taxRate = calculateTaxRate(months);
+    const tax = income * taxRate;
+
+    // Valor líquido
+    const netAmount = grossAmount - tax;
+
+    setResult(
+      `Resultado:\n\n` +
+        `Valor Bruto: R$ ${grossAmount.toFixed(2)}\n` +
+        `Imposto (${(taxRate * 100).toFixed(1)}%): R$ ${tax.toFixed(2)}\n` +
+        `Valor Líquido: R$ ${netAmount.toFixed(2)}\n` +
+        `Rendimento Líquido: R$ ${(netAmount - principal).toFixed(2)}`
+    );
   };
 
   return (
@@ -42,60 +71,113 @@ const SimulacoesScreen = () => {
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <ThemedView style={styles.content}>
           <ThemedText type="title" style={styles.title}>
-            Simulador de Investimentos
+            Simulador de CDB
           </ThemedText>
 
-          <ThemedText style={styles.label}>Tipo de Investimento:</ThemedText>
-          <TextInput
-            style={styles.input}
-            placeholder="Poupança, CDB, LCI, etc."
-            value={investmentType}
-            onChangeText={setInvestmentType}
-          />
+          <View style={styles.optionsContainer}>
+            <TouchableOpacity
+              style={[
+                styles.optionButton,
+                selectedOption === 1 && styles.optionButtonSelected,
+              ]}
+              onPress={() => handleOptionSelect(1)}
+            >
+              <ThemedText
+                style={[
+                  styles.optionButtonText,
+                  selectedOption === 1 && styles.optionButtonTextSelected,
+                ]}
+              >
+                Opção 1
+              </ThemedText>
+            </TouchableOpacity>
 
-          <ThemedText style={styles.label}>Valor Inicial (R$):</ThemedText>
-          <TextInput
-            style={styles.input}
-            placeholder="Ex: 1000"
-            keyboardType="numeric"
-            value={initialValue}
-            onChangeText={setInitialValue}
-          />
+            <TouchableOpacity
+              style={[
+                styles.optionButton,
+                selectedOption === 2 && styles.optionButtonSelected,
+              ]}
+              onPress={() => handleOptionSelect(2)}
+            >
+              <ThemedText
+                style={[
+                  styles.optionButtonText,
+                  selectedOption === 2 && styles.optionButtonTextSelected,
+                ]}
+              >
+                Opção 2
+              </ThemedText>
+            </TouchableOpacity>
 
-          <ThemedText style={styles.label}>Depósito Mensal (R$):</ThemedText>
-          <TextInput
-            style={styles.input}
-            placeholder="Ex: 100"
-            keyboardType="numeric"
-            value={monthlyDeposit}
-            onChangeText={setMonthlyDeposit}
-          />
+            <TouchableOpacity
+              style={[
+                styles.optionButton,
+                selectedOption === 3 && styles.optionButtonSelected,
+              ]}
+              onPress={() => handleOptionSelect(3)}
+            >
+              <ThemedText
+                style={[
+                  styles.optionButtonText,
+                  selectedOption === 3 && styles.optionButtonTextSelected,
+                ]}
+              >
+                Opção 3
+              </ThemedText>
+            </TouchableOpacity>
+          </View>
 
-          <ThemedText style={styles.label}>Taxa de Juros Anual (%):</ThemedText>
-          <TextInput
-            style={styles.input}
-            placeholder="Ex: 5"
-            keyboardType="numeric"
-            value={interestRate}
-            onChangeText={setInterestRate}
-          />
+          {selectedOption && (
+            <>
+              <ThemedText style={styles.label}>Valor Inicial (R$):</ThemedText>
+              <TextInput
+                style={styles.input}
+                placeholder="Ex: 1000"
+                keyboardType="numeric"
+                value={initialValue}
+                onChangeText={setInitialValue}
+              />
 
-          <ThemedText style={styles.label}>Período (Meses):</ThemedText>
-          <TextInput
-            style={styles.input}
-            placeholder="Ex: 12"
-            keyboardType="numeric"
-            value={period}
-            onChangeText={setPeriod}
-          />
+              <ThemedText style={styles.label}>Taxa CDI Anual (%):</ThemedText>
+              <TextInput
+                style={styles.input}
+                placeholder="Ex: 13.75"
+                keyboardType="numeric"
+                value={cdiRate}
+                onChangeText={setCdiRate}
+              />
 
-          <TouchableOpacity style={styles.button} onPress={calculateInvestment}>
-            <ThemedText style={styles.buttonText}>Calcular</ThemedText>
-          </TouchableOpacity>
+              <ThemedText style={styles.label}>
+                Percentual do CDI (%):
+              </ThemedText>
+              <TextInput
+                style={styles.input}
+                placeholder="Ex: 110"
+                keyboardType="numeric"
+                value={cdiPercentage}
+                onChangeText={setCdiPercentage}
+              />
 
-          {result ? (
-            <ThemedText style={styles.result}>{result}</ThemedText>
-          ) : null}
+              <ThemedText style={styles.label}>Período (Meses):</ThemedText>
+              <TextInput
+                style={styles.input}
+                placeholder="Ex: 12"
+                keyboardType="numeric"
+                value={period}
+                onChangeText={setPeriod}
+              />
+
+              <TouchableOpacity style={styles.button} onPress={calculateCDB}>
+                <ThemedText style={styles.buttonText}>Calcular</ThemedText>
+              </TouchableOpacity>
+
+              {result ? (
+                <ThemedText style={[styles.result, styles.multilineResult]}>
+                  {result}
+                </ThemedText>
+              ) : null}
+            </>
+          )}
         </ThemedView>
       </ScrollView>
     </ThemedView>
@@ -125,6 +207,32 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#2e78b7",
   },
+  optionsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 30,
+    gap: 10,
+  },
+  optionButton: {
+    flex: 1,
+    backgroundColor: "white",
+    padding: 15,
+    borderRadius: 5,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#2e78b7",
+  },
+  optionButtonSelected: {
+    backgroundColor: "#2e78b7",
+  },
+  optionButtonText: {
+    color: "#2e78b7",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  optionButtonTextSelected: {
+    color: "white",
+  },
   label: {
     fontSize: 16,
     marginBottom: 5,
@@ -152,9 +260,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   result: {
-    fontSize: 20,
+    fontSize: 18,
     marginTop: 20,
-    textAlign: "center",
+    textAlign: "left",
+  },
+  multilineResult: {
+    lineHeight: 28,
   },
 });
 
