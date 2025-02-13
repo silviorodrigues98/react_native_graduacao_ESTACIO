@@ -26,12 +26,22 @@ const SimulacoesScreen = () => {
 
   const handleOptionSelect = (option: number) => {
     setSelectedOption(option);
-    // Limpar resultados anteriores quando uma nova opção é selecionada
     setResult("");
+    switch (option) {
+      case 1:
+        setCdiPercentage("110"); // 110% do CDI
+        break;
+      case 2:
+        setCdiPercentage("108"); // 108% do CDI
+        break;
+      case 3:
+        setCdiPercentage("105"); // 105% do CDI
+        break;
+    }
   };
 
   const calculateCDB = () => {
-    if (!initialValue || !cdiRate || !cdiPercentage || !period) {
+    if (!initialValue || !cdiRate || !period) {
       setResult("Preencha todos os campos.");
       return;
     }
@@ -41,29 +51,80 @@ const SimulacoesScreen = () => {
     const percentage = parseFloat(cdiPercentage) / 100;
     const months = parseInt(period);
 
-    // Taxa efetiva
-    const effectiveRate = (cdi * percentage) / 12;
+    let effectiveRate, grossAmount, income, taxRate, tax, netAmount;
 
-    // Montante bruto
-    const grossAmount = principal * Math.pow(1 + effectiveRate, months);
+    switch (selectedOption) {
+      case 1: // CDB com taxa progressiva
+        effectiveRate = (cdi * percentage) / 12;
+        grossAmount = principal * Math.pow(1 + effectiveRate, months);
+        income = grossAmount - principal;
+        taxRate = calculateTaxRate(months);
+        tax = income * taxRate;
+        netAmount = grossAmount - tax;
 
-    // Rendimento
-    const income = grossAmount - principal;
+        setResult(
+          `Resultado do CDB Premium (${cdiPercentage}% CDI):\n\n` +
+            `Valor Bruto: R$ ${grossAmount.toFixed(2)}\n` +
+            `Imposto (${(taxRate * 100).toFixed(1)}%): R$ ${tax.toFixed(2)}\n` +
+            `Valor Líquido: R$ ${netAmount.toFixed(2)}\n` +
+            `Rendimento Líquido: R$ ${(netAmount - principal).toFixed(2)}\n\n` +
+            `Características:\n` +
+            `• Maior rentabilidade\n` +
+            `• Liquidez em D+1\n` +
+            `• IR regressivo`
+        );
+        break;
 
-    // Imposto
-    const taxRate = calculateTaxRate(months);
-    const tax = income * taxRate;
+      case 2: // CDB com taxa fixa
+        effectiveRate = (cdi * percentage) / 12;
+        // Adiciona um bônus de 0.5% ao ano para investimentos acima de 100k
+        if (principal >= 100000) {
+          effectiveRate += 0.005 / 12;
+        }
+        grossAmount = principal * Math.pow(1 + effectiveRate, months);
+        income = grossAmount - principal;
+        taxRate = calculateTaxRate(months);
+        tax = income * taxRate;
+        netAmount = grossAmount - tax;
 
-    // Valor líquido
-    const netAmount = grossAmount - tax;
+        setResult(
+          `Resultado do CDB Empresarial (${cdiPercentage}% CDI):\n\n` +
+            `Valor Bruto: R$ ${grossAmount.toFixed(2)}\n` +
+            `Imposto (${(taxRate * 100).toFixed(1)}%): R$ ${tax.toFixed(2)}\n` +
+            `Valor Líquido: R$ ${netAmount.toFixed(2)}\n` +
+            `Rendimento Líquido: R$ ${(netAmount - principal).toFixed(2)}\n\n` +
+            `Características:\n` +
+            `• Bônus de 0.5% a.a. para valores acima de R$ 100.000\n` +
+            `• Liquidez em D+0\n` +
+            `• IR regressivo`
+        );
+        break;
 
-    setResult(
-      `Resultado:\n\n` +
-        `Valor Bruto: R$ ${grossAmount.toFixed(2)}\n` +
-        `Imposto (${(taxRate * 100).toFixed(1)}%): R$ ${tax.toFixed(2)}\n` +
-        `Valor Líquido: R$ ${netAmount.toFixed(2)}\n` +
-        `Rendimento Líquido: R$ ${(netAmount - principal).toFixed(2)}`
-    );
+      case 3: // CDB com carência
+        // Adiciona 0.2% ao mês após 12 meses
+        effectiveRate = (cdi * percentage) / 12;
+        if (months > 12) {
+          effectiveRate += 0.002;
+        }
+        grossAmount = principal * Math.pow(1 + effectiveRate, months);
+        income = grossAmount - principal;
+        taxRate = calculateTaxRate(months);
+        tax = income * taxRate;
+        netAmount = grossAmount - tax;
+
+        setResult(
+          `Resultado do CDB Longo Prazo (${cdiPercentage}% CDI):\n\n` +
+            `Valor Bruto: R$ ${grossAmount.toFixed(2)}\n` +
+            `Imposto (${(taxRate * 100).toFixed(1)}%): R$ ${tax.toFixed(2)}\n` +
+            `Valor Líquido: R$ ${netAmount.toFixed(2)}\n` +
+            `Rendimento Líquido: R$ ${(netAmount - principal).toFixed(2)}\n\n` +
+            `Características:\n` +
+            `• Bônus de 0.2% ao mês após 12 meses\n` +
+            `• Carência de 1 ano\n` +
+            `• IR regressivo`
+        );
+        break;
+    }
   };
 
   return (
@@ -88,7 +149,7 @@ const SimulacoesScreen = () => {
                   selectedOption === 1 && styles.optionButtonTextSelected,
                 ]}
               >
-                Opção 1
+                CDB Premium
               </ThemedText>
             </TouchableOpacity>
 
@@ -105,7 +166,7 @@ const SimulacoesScreen = () => {
                   selectedOption === 2 && styles.optionButtonTextSelected,
                 ]}
               >
-                Opção 2
+                CDB Empresarial
               </ThemedText>
             </TouchableOpacity>
 
@@ -122,13 +183,22 @@ const SimulacoesScreen = () => {
                   selectedOption === 3 && styles.optionButtonTextSelected,
                 ]}
               >
-                Opção 3
+                CDB Longo Prazo
               </ThemedText>
             </TouchableOpacity>
           </View>
 
           {selectedOption && (
             <>
+              <ThemedText style={styles.description}>
+                {selectedOption === 1 &&
+                  "CDB Premium: Maior rentabilidade do mercado com 110% do CDI"}
+                {selectedOption === 2 &&
+                  "CDB Empresarial: Ideal para grandes investimentos com bônus especial"}
+                {selectedOption === 3 &&
+                  "CDB Longo Prazo: Melhor rentabilidade para investimentos de longo prazo"}
+              </ThemedText>
+
               <ThemedText style={styles.label}>Valor Inicial (R$):</ThemedText>
               <TextInput
                 style={styles.input}
@@ -145,17 +215,6 @@ const SimulacoesScreen = () => {
                 keyboardType="numeric"
                 value={cdiRate}
                 onChangeText={setCdiRate}
-              />
-
-              <ThemedText style={styles.label}>
-                Percentual do CDI (%):
-              </ThemedText>
-              <TextInput
-                style={styles.input}
-                placeholder="Ex: 110"
-                keyboardType="numeric"
-                value={cdiPercentage}
-                onChangeText={setCdiPercentage}
               />
 
               <ThemedText style={styles.label}>Período (Meses):</ThemedText>
@@ -207,6 +266,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#2e78b7",
   },
+  description: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 20,
+    color: "#666",
+    paddingHorizontal: 20,
+  },
   optionsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -219,16 +285,20 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 5,
     alignItems: "center",
+    justifyContent: "center",
     borderWidth: 1,
     borderColor: "#2e78b7",
+    height: 60, // Altura fixa para todos os botões
+    minWidth: 100, // Largura mínima para evitar compressão excessiva
   },
   optionButtonSelected: {
     backgroundColor: "#2e78b7",
   },
   optionButtonText: {
     color: "#2e78b7",
-    fontSize: 16,
+    fontSize: 14, // Reduzido para melhor ajuste
     fontWeight: "bold",
+    textAlign: "center",
   },
   optionButtonTextSelected: {
     color: "white",
