@@ -11,119 +11,253 @@ import { ThemedView } from "../../components/ThemedView";
 
 const SimulacoesScreen = () => {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
-  const [initialValue, setInitialValue] = useState("");
-  const [cdiRate, setCdiRate] = useState("");
-  const [cdiPercentage, setCdiPercentage] = useState("");
-  const [period, setPeriod] = useState("");
   const [result, setResult] = useState("");
 
-  const calculateTaxRate = (months: number) => {
-    if (months <= 6) return 0.225; // até 180 dias
-    if (months <= 12) return 0.2; // 181 a 360 dias
-    if (months <= 24) return 0.175; // 361 a 720 dias
-    return 0.15; // acima de 720 dias
-  };
+  // State variables for Aposentadoria
+  const [desiredMonthlyIncome, setDesiredMonthlyIncome] = useState("");
+  const [retirementAge, setRetirementAge] = useState("");
+  const [currentAge, setCurrentAge] = useState("");
+  const [currentSavings, setCurrentSavings] = useState("");
+  const [retirementInterestRate, setRetirementInterestRate] = useState("");
 
-  const handleOptionSelect = (option: number) => {
-    setSelectedOption(option);
-    setResult("");
-    switch (option) {
-      case 1:
-        setCdiPercentage("110"); // 110% do CDI
-        break;
-      case 2:
-        setCdiPercentage("108"); // 108% do CDI
-        break;
-      case 3:
-        setCdiPercentage("105"); // 105% do CDI
-        break;
-    }
-  };
+  // State variables for Tempo para Objetivo
+  const [monthlyInvestment, setMonthlyInvestment] = useState("");
+  const [annualInterestRate, setAnnualInterestRate] = useState("");
+  const [goalAmount, setGoalAmount] = useState("");
 
-  const calculateCDB = () => {
-    if (!initialValue || !cdiRate || !period) {
+  // State variables for Rendimento
+  const [investedAmount, setInvestedAmount] = useState("");
+  const [yieldPercentage, setYieldPercentage] = useState("");
+
+  const calculateRetirement = () => {
+    // Basic Validation
+    if (
+      !desiredMonthlyIncome ||
+      !retirementAge ||
+      !currentAge ||
+      !retirementInterestRate
+    ) {
       setResult("Preencha todos os campos.");
       return;
     }
 
-    const principal = parseFloat(initialValue);
-    const cdi = parseFloat(cdiRate) / 100;
-    const percentage = parseFloat(cdiPercentage) / 100;
-    const months = parseInt(period);
+    const income = parseFloat(desiredMonthlyIncome);
+    const rAge = parseInt(retirementAge);
+    const cAge = parseInt(currentAge);
+    const savings = parseFloat(currentSavings || 0); // Default to 0
+    const rate = parseFloat(retirementInterestRate) / 100 / 12;
 
-    let effectiveRate, grossAmount, income, taxRate, tax, netAmount;
+    const yearsToRetirement = rAge - cAge;
+    const monthsToRetirement = yearsToRetirement * 12;
 
+    let requiredSavings = 0;
+
+    if (rate > 0) {
+      // Assuming you can withdraw interest only without touching the principal
+      requiredSavings = income / rate;
+    } else {
+      // If no interest, you would need infinite savings to withdraw monthly
+      requiredSavings = Infinity;
+    }
+    setResult(
+      `Para ter R$${income.toFixed(
+        2
+      )} por mês na aposentadoria, você precisa ter R$${requiredSavings.toFixed(
+        2
+      )}`
+    );
+  };
+
+  const calculateTimeForGoal = () => {
+    if (!monthlyInvestment || !annualInterestRate || !goalAmount) {
+      setResult("Preencha todos os campos.");
+      return;
+    }
+
+    const monthly = parseFloat(monthlyInvestment);
+    const rate = parseFloat(annualInterestRate) / 100 / 12;
+    const goal = parseFloat(goalAmount);
+
+    if (rate === 0) {
+      const timeToGoal = goal / monthly;
+      setResult(
+        `Levará ${timeToGoal.toFixed(2)} meses para atingir o objetivo.`
+      );
+    } else {
+      let months = 0;
+      let balance = 0;
+      while (balance < goal && months < 1200) {
+        // Prevent infinite loops
+        balance = (balance + monthly) * (1 + rate);
+        months++;
+      }
+
+      if (months === 1200) {
+        setResult("Não será possível atingir o objetivo com esses valores.");
+      } else {
+        setResult(`Levará ${months} meses para atingir o objetivo.`);
+      }
+    }
+  };
+
+  const calculateYield = () => {
+    if (!investedAmount || !yieldPercentage) {
+      setResult("Preencha todos os campos.");
+      return;
+    }
+
+    const invested = parseFloat(investedAmount);
+    const rate = parseFloat(yieldPercentage) / 100;
+
+    const dailyYield = (invested * rate) / 365;
+    const monthlyYield = (invested * rate) / 12;
+    const annualYield = invested * rate;
+
+    setResult(
+      `Rendimento:\n\n` +
+        `Diário: R$ ${dailyYield.toFixed(2)}\n` +
+        `Mensal: R$ ${monthlyYield.toFixed(2)}\n` +
+        `Anual: R$ ${annualYield.toFixed(2)}`
+    );
+  };
+
+  const renderSimulationFields = () => {
     switch (selectedOption) {
-      case 1: // CDB com taxa progressiva
-        effectiveRate = (cdi * percentage) / 12;
-        grossAmount = principal * Math.pow(1 + effectiveRate, months);
-        income = grossAmount - principal;
-        taxRate = calculateTaxRate(months);
-        tax = income * taxRate;
-        netAmount = grossAmount - tax;
+      case 1: // Aposentadoria
+        return (
+          <>
+            <ThemedText style={styles.label}>
+              Renda Mensal Desejada (R$):
+            </ThemedText>
+            <TextInput
+              style={styles.input}
+              placeholder="Ex: 3000"
+              keyboardType="numeric"
+              value={desiredMonthlyIncome}
+              onChangeText={setDesiredMonthlyIncome}
+            />
 
-        setResult(
-          `Resultado do CDB Premium (${cdiPercentage}% CDI):\n\n` +
-            `Valor Bruto: R$ ${grossAmount.toFixed(2)}\n` +
-            `Imposto (${(taxRate * 100).toFixed(1)}%): R$ ${tax.toFixed(2)}\n` +
-            `Valor Líquido: R$ ${netAmount.toFixed(2)}\n` +
-            `Rendimento Líquido: R$ ${(netAmount - principal).toFixed(2)}\n\n` +
-            `Características:\n` +
-            `• Maior rentabilidade\n` +
-            `• Liquidez em D+1\n` +
-            `• IR regressivo`
+            <ThemedText style={styles.label}>
+              Idade de Aposentadoria:
+            </ThemedText>
+            <TextInput
+              style={styles.input}
+              placeholder="Ex: 65"
+              keyboardType="numberic"
+              value={retirementAge}
+              onChangeText={setRetirementAge}
+            />
+            <ThemedText style={styles.label}>Idade Atual:</ThemedText>
+            <TextInput
+              style={styles.input}
+              placeholder="Ex: 30"
+              keyboardType="numberic"
+              value={currentAge}
+              onChangeText={setCurrentAge}
+            />
+            <ThemedText style={styles.label}>Valor economizado:</ThemedText>
+            <TextInput
+              style={styles.input}
+              placeholder="Ex: 30"
+              keyboardType="numberic"
+              value={currentSavings}
+              onChangeText={setCurrentSavings}
+            />
+
+            <ThemedText style={styles.label}>
+              Taxa de Juros Anual (%):
+            </ThemedText>
+            <TextInput
+              style={styles.input}
+              placeholder="Ex: 8"
+              keyboardType="numeric"
+              value={retirementInterestRate}
+              onChangeText={setRetirementInterestRate}
+            />
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={calculateRetirement}
+            >
+              <ThemedText style={styles.buttonText}>Calcular</ThemedText>
+            </TouchableOpacity>
+          </>
         );
-        break;
 
-      case 2: // CDB com taxa fixa
-        effectiveRate = (cdi * percentage) / 12;
-        // Adiciona um bônus de 0.5% ao ano para investimentos acima de 100k
-        if (principal >= 100000) {
-          effectiveRate += 0.005 / 12;
-        }
-        grossAmount = principal * Math.pow(1 + effectiveRate, months);
-        income = grossAmount - principal;
-        taxRate = calculateTaxRate(months);
-        tax = income * taxRate;
-        netAmount = grossAmount - tax;
+      case 2: // Tempo para Objetivo
+        return (
+          <>
+            <ThemedText style={styles.label}>
+              Investimento Mensal (R$):
+            </ThemedText>
+            <TextInput
+              style={styles.input}
+              placeholder="Ex: 500"
+              keyboardType="numeric"
+              value={monthlyInvestment}
+              onChangeText={setMonthlyInvestment}
+            />
 
-        setResult(
-          `Resultado do CDB Empresarial (${cdiPercentage}% CDI):\n\n` +
-            `Valor Bruto: R$ ${grossAmount.toFixed(2)}\n` +
-            `Imposto (${(taxRate * 100).toFixed(1)}%): R$ ${tax.toFixed(2)}\n` +
-            `Valor Líquido: R$ ${netAmount.toFixed(2)}\n` +
-            `Rendimento Líquido: R$ ${(netAmount - principal).toFixed(2)}\n\n` +
-            `Características:\n` +
-            `• Bônus de 0.5% a.a. para valores acima de R$ 100.000\n` +
-            `• Liquidez em D+0\n` +
-            `• IR regressivo`
+            <ThemedText style={styles.label}>
+              Taxa de Juros Anual (%):
+            </ThemedText>
+            <TextInput
+              style={styles.input}
+              placeholder="Ex: 10"
+              keyboardType="numeric"
+              value={annualInterestRate}
+              onChangeText={setAnnualInterestRate}
+            />
+
+            <ThemedText style={styles.label}>Objetivo (R$):</ThemedText>
+            <TextInput
+              style={styles.input}
+              placeholder="Ex: 50000"
+              keyboardType="numeric"
+              value={goalAmount}
+              onChangeText={setGoalAmount}
+            />
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={calculateTimeForGoal}
+            >
+              <ThemedText style={styles.buttonText}>Calcular</ThemedText>
+            </TouchableOpacity>
+          </>
         );
-        break;
 
-      case 3: // CDB com carência
-        // Adiciona 0.2% ao mês após 12 meses
-        effectiveRate = (cdi * percentage) / 12;
-        if (months > 12) {
-          effectiveRate += 0.002;
-        }
-        grossAmount = principal * Math.pow(1 + effectiveRate, months);
-        income = grossAmount - principal;
-        taxRate = calculateTaxRate(months);
-        tax = income * taxRate;
-        netAmount = grossAmount - tax;
+      case 3: // Rendimento
+        return (
+          <>
+            <ThemedText style={styles.label}>Valor Investido (R$):</ThemedText>
+            <TextInput
+              style={styles.input}
+              placeholder="Ex: 10000"
+              keyboardType="numeric"
+              value={investedAmount}
+              onChangeText={setInvestedAmount}
+            />
 
-        setResult(
-          `Resultado do CDB Longo Prazo (${cdiPercentage}% CDI):\n\n` +
-            `Valor Bruto: R$ ${grossAmount.toFixed(2)}\n` +
-            `Imposto (${(taxRate * 100).toFixed(1)}%): R$ ${tax.toFixed(2)}\n` +
-            `Valor Líquido: R$ ${netAmount.toFixed(2)}\n` +
-            `Rendimento Líquido: R$ ${(netAmount - principal).toFixed(2)}\n\n` +
-            `Características:\n` +
-            `• Bônus de 0.2% ao mês após 12 meses\n` +
-            `• Carência de 1 ano\n` +
-            `• IR regressivo`
+            <ThemedText style={styles.label}>
+              Taxa de Rendimento Anual (%):
+            </ThemedText>
+            <TextInput
+              style={styles.input}
+              placeholder="Ex: 7"
+              keyboardType="numeric"
+              value={yieldPercentage}
+              onChangeText={setYieldPercentage}
+            />
+
+            <TouchableOpacity style={styles.button} onPress={calculateYield}>
+              <ThemedText style={styles.buttonText}>Calcular</ThemedText>
+            </TouchableOpacity>
+          </>
         );
-        break;
+
+      default:
+        return null;
     }
   };
 
@@ -132,7 +266,7 @@ const SimulacoesScreen = () => {
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <ThemedView style={styles.content}>
           <ThemedText type="title" style={styles.title}>
-            Simulador de CDB
+            Simulações Financeiras
           </ThemedText>
 
           <View style={styles.optionsContainer}>
@@ -141,7 +275,10 @@ const SimulacoesScreen = () => {
                 styles.optionButton,
                 selectedOption === 1 && styles.optionButtonSelected,
               ]}
-              onPress={() => handleOptionSelect(1)}
+              onPress={() => {
+                setSelectedOption(1);
+                setResult("");
+              }}
             >
               <ThemedText
                 style={[
@@ -149,7 +286,7 @@ const SimulacoesScreen = () => {
                   selectedOption === 1 && styles.optionButtonTextSelected,
                 ]}
               >
-                CDB Premium
+                Aposentadoria
               </ThemedText>
             </TouchableOpacity>
 
@@ -158,7 +295,10 @@ const SimulacoesScreen = () => {
                 styles.optionButton,
                 selectedOption === 2 && styles.optionButtonSelected,
               ]}
-              onPress={() => handleOptionSelect(2)}
+              onPress={() => {
+                setSelectedOption(2);
+                setResult("");
+              }}
             >
               <ThemedText
                 style={[
@@ -166,7 +306,7 @@ const SimulacoesScreen = () => {
                   selectedOption === 2 && styles.optionButtonTextSelected,
                 ]}
               >
-                CDB Empresarial
+                Tempo para Objetivo
               </ThemedText>
             </TouchableOpacity>
 
@@ -175,7 +315,10 @@ const SimulacoesScreen = () => {
                 styles.optionButton,
                 selectedOption === 3 && styles.optionButtonSelected,
               ]}
-              onPress={() => handleOptionSelect(3)}
+              onPress={() => {
+                setSelectedOption(3);
+                setResult("");
+              }}
             >
               <ThemedText
                 style={[
@@ -183,60 +326,18 @@ const SimulacoesScreen = () => {
                   selectedOption === 3 && styles.optionButtonTextSelected,
                 ]}
               >
-                CDB Longo Prazo
+                Rendimento
               </ThemedText>
             </TouchableOpacity>
           </View>
 
-          {selectedOption && (
-            <>
-              <ThemedText style={styles.description}>
-                {selectedOption === 1 &&
-                  "CDB Premium: Maior rentabilidade do mercado com 110% do CDI"}
-                {selectedOption === 2 &&
-                  "CDB Empresarial: Ideal para grandes investimentos com bônus especial"}
-                {selectedOption === 3 &&
-                  "CDB Longo Prazo: Melhor rentabilidade para investimentos de longo prazo"}
-              </ThemedText>
+          {renderSimulationFields()}
 
-              <ThemedText style={styles.label}>Valor Inicial (R$):</ThemedText>
-              <TextInput
-                style={styles.input}
-                placeholder="Ex: 1000"
-                keyboardType="numeric"
-                value={initialValue}
-                onChangeText={setInitialValue}
-              />
-
-              <ThemedText style={styles.label}>Taxa CDI Anual (%):</ThemedText>
-              <TextInput
-                style={styles.input}
-                placeholder="Ex: 13.75"
-                keyboardType="numeric"
-                value={cdiRate}
-                onChangeText={setCdiRate}
-              />
-
-              <ThemedText style={styles.label}>Período (Meses):</ThemedText>
-              <TextInput
-                style={styles.input}
-                placeholder="Ex: 12"
-                keyboardType="numeric"
-                value={period}
-                onChangeText={setPeriod}
-              />
-
-              <TouchableOpacity style={styles.button} onPress={calculateCDB}>
-                <ThemedText style={styles.buttonText}>Calcular</ThemedText>
-              </TouchableOpacity>
-
-              {result ? (
-                <ThemedText style={[styles.result, styles.multilineResult]}>
-                  {result}
-                </ThemedText>
-              ) : null}
-            </>
-          )}
+          {result ? (
+            <ThemedText style={[styles.result, styles.multilineResult]}>
+              {result}
+            </ThemedText>
+          ) : null}
         </ThemedView>
       </ScrollView>
     </ThemedView>
@@ -274,13 +375,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   optionsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: "column",
+    alignItems: "stretch",
     marginBottom: 30,
     gap: 10,
   },
   optionButton: {
-    flex: 1,
     backgroundColor: "white",
     padding: 15,
     borderRadius: 5,
@@ -288,15 +388,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderWidth: 1,
     borderColor: "#2e78b7",
-    height: 60, // Altura fixa para todos os botões
-    minWidth: 100, // Largura mínima para evitar compressão excessiva
+    height: 60,
   },
   optionButtonSelected: {
     backgroundColor: "#2e78b7",
   },
   optionButtonText: {
     color: "#2e78b7",
-    fontSize: 14, // Reduzido para melhor ajuste
+    fontSize: 14,
     fontWeight: "bold",
     textAlign: "center",
   },
@@ -330,12 +429,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   result: {
-    fontSize: 18,
+    fontSize: 16,
     marginTop: 20,
     textAlign: "left",
+    wordWrap: "break-word", //Crucial for wrapping
   },
   multilineResult: {
-    lineHeight: 28,
+    lineHeight: 24,
   },
 });
 
