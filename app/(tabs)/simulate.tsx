@@ -41,6 +41,21 @@ const SimulacoesScreen = () => {
     setResult("");
   };
 
+  const resetSimulation = () => {
+    setSelectedOption(null);
+    setResult("");
+    setDesiredMonthlyIncome("");
+    setRetirementAge("");
+    setCurrentAge("");
+    setCurrentSavings("");
+    setRetirementInterestRate("");
+    setMonthlyInvestment("");
+    setAnnualInterestRate("");
+    setGoalAmount("");
+    setInvestedAmount("");
+    setYieldPercentage("");
+  };
+
   const calculateRetirement = () => {
     // Basic Validation
     if (
@@ -334,6 +349,12 @@ const SimulacoesScreen = () => {
                 </ThemedText>
               </TouchableOpacity>
             </View>
+          )}
+
+          {selectedOption !== null && (
+            <TouchableOpacity style={styles.button} onPress={resetSimulation}>
+              <ThemedText style={styles.buttonText}>Voltar</ThemedText>
+            </TouchableOpacity>
           )}
 
           {renderSimulationFields()}
