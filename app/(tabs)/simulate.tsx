@@ -29,6 +29,18 @@ const SimulacoesScreen = () => {
   const [investedAmount, setInvestedAmount] = useState("");
   const [yieldPercentage, setYieldPercentage] = useState("");
 
+  const calculateTaxRate = (months: number) => {
+    if (months <= 6) return 0.225; // até 180 dias
+    if (months <= 12) return 0.2; // 181 a 360 dias
+    if (months <= 24) return 0.175; // 361 a 720 dias
+    return 0.15; // acima de 720 dias
+  };
+
+  const handleOptionSelect = (option) => {
+    setSelectedOption(option);
+    setResult("");
+  };
+
   const calculateRetirement = () => {
     // Basic Validation
     if (
@@ -269,67 +281,60 @@ const SimulacoesScreen = () => {
             Simulações Financeiras
           </ThemedText>
 
-          <View style={styles.optionsContainer}>
-            <TouchableOpacity
-              style={[
-                styles.optionButton,
-                selectedOption === 1 && styles.optionButtonSelected,
-              ]}
-              onPress={() => {
-                setSelectedOption(1);
-                setResult("");
-              }}
-            >
-              <ThemedText
+          {selectedOption === null && ( // Conditionally render buttons
+            <View style={styles.optionsContainer}>
+              <TouchableOpacity
                 style={[
-                  styles.optionButtonText,
-                  selectedOption === 1 && styles.optionButtonTextSelected,
+                  styles.optionButton,
+                  selectedOption === 1 && styles.optionButtonSelected,
                 ]}
+                onPress={() => handleOptionSelect(1)}
               >
-                Aposentadoria
-              </ThemedText>
-            </TouchableOpacity>
+                <ThemedText
+                  style={[
+                    styles.optionButtonText,
+                    selectedOption === 1 && styles.optionButtonTextSelected,
+                  ]}
+                >
+                  Aposentadoria
+                </ThemedText>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[
-                styles.optionButton,
-                selectedOption === 2 && styles.optionButtonSelected,
-              ]}
-              onPress={() => {
-                setSelectedOption(2);
-                setResult("");
-              }}
-            >
-              <ThemedText
+              <TouchableOpacity
                 style={[
-                  styles.optionButtonText,
-                  selectedOption === 2 && styles.optionButtonTextSelected,
+                  styles.optionButton,
+                  selectedOption === 2 && styles.optionButtonSelected,
                 ]}
+                onPress={() => handleOptionSelect(2)}
               >
-                Tempo para Objetivo
-              </ThemedText>
-            </TouchableOpacity>
+                <ThemedText
+                  style={[
+                    styles.optionButtonText,
+                    selectedOption === 2 && styles.optionButtonTextSelected,
+                  ]}
+                >
+                  Tempo para Objetivo
+                </ThemedText>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[
-                styles.optionButton,
-                selectedOption === 3 && styles.optionButtonSelected,
-              ]}
-              onPress={() => {
-                setSelectedOption(3);
-                setResult("");
-              }}
-            >
-              <ThemedText
+              <TouchableOpacity
                 style={[
-                  styles.optionButtonText,
-                  selectedOption === 3 && styles.optionButtonTextSelected,
+                  styles.optionButton,
+                  selectedOption === 3 && styles.optionButtonSelected,
                 ]}
+                onPress={() => handleOptionSelect(3)}
               >
-                Rendimento
-              </ThemedText>
-            </TouchableOpacity>
-          </View>
+                <ThemedText
+                  style={[
+                    styles.optionButtonText,
+                    selectedOption === 3 && styles.optionButtonTextSelected,
+                  ]}
+                >
+                  Rendimento
+                </ThemedText>
+              </TouchableOpacity>
+            </View>
+          )}
 
           {renderSimulationFields()}
 
@@ -432,7 +437,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 20,
     textAlign: "left",
-    wordWrap: "break-word", //Crucial for wrapping
+    wordWrap: "break-word",
   },
   multilineResult: {
     lineHeight: 24,
