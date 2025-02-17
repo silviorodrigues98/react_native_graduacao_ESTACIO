@@ -13,6 +13,29 @@ import { ThemedView } from "../../components/ThemedView";
 // Get screen height to conditionally enable scrolling
 const { height: screenHeight } = Dimensions.get("window");
 
+// Define types for simulation options
+type SimulationOption = 1 | 2 | 3 | null;
+
+// Define types for simulation state
+type RetirementState = {
+  desiredMonthlyIncome: string;
+  retirementAge: string;
+  currentAge: string;
+  currentSavings: string;
+  retirementInterestRate: string;
+};
+
+type GoalState = {
+  monthlyInvestment: string;
+  annualInterestRate: string;
+  goalAmount: string;
+};
+
+type YieldState = {
+  investedAmount: string;
+  yieldPercentage: string;
+};
+
 const SimulacoesScreen = () => {
   const [selectedOption, setSelectedOption] = useState<SimulationOption>(null);
   const [contentHeight, setContentHeight] = useState(0);
@@ -85,6 +108,7 @@ const SimulacoesScreen = () => {
       <TextInput
         style={styles.input}
         placeholder={placeholder}
+        placeholderTextColor="#aaa" // Light gray placeholder text
         keyboardType={keyboardType}
         value={value}
         onChangeText={onChangeText}
@@ -97,13 +121,15 @@ const SimulacoesScreen = () => {
     title,
     onPress,
     style,
+    textStyle,
   }: {
     title: string;
     onPress: () => void;
     style?: object;
+    textStyle?: object;
   }) => (
     <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
-      <ThemedText style={styles.buttonText}>{title}</ThemedText>
+      <ThemedText style={[styles.buttonText, textStyle]}>{title}</ThemedText>
     </TouchableOpacity>
   );
 
@@ -250,6 +276,11 @@ const SimulacoesScreen = () => {
                     styles.optionButton,
                     selectedOption === option && styles.optionButtonSelected,
                   ]}
+                  textStyle={[
+                    styles.optionButtonText,
+                    selectedOption === option &&
+                      styles.optionButtonTextSelected,
+                  ]}
                 />
               ))}
             </View>
@@ -308,10 +339,20 @@ const styles = StyleSheet.create({
   optionButtonSelected: {
     backgroundColor: "#2e78b7",
   },
+  optionButtonText: {
+    color: "#2e78b7", // Dark text for unselected buttons
+    fontSize: 14,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  optionButtonTextSelected: {
+    color: "white", // White text for selected buttons
+  },
   label: {
     fontSize: 16,
     marginBottom: 5,
     marginTop: 10,
+    color: "#fff", // White label text
   },
   input: {
     borderWidth: 1,
@@ -321,6 +362,9 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontSize: 16,
     width: "100%",
+    color: "white", // White text
+    fontWeight: "bold", // Bold text
+    backgroundColor: "#333", // Dark background for better contrast
   },
   button: {
     backgroundColor: "#2e78b7",
@@ -330,7 +374,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   buttonText: {
-    color: "white",
+    color: "white", // White text for "Calcular" and "Voltar" buttons
     fontSize: 18,
     fontWeight: "bold",
   },
