@@ -5,173 +5,214 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Dimensions,
 } from "react-native";
 import { ThemedText } from "../../components/ThemedText";
 import { ThemedView } from "../../components/ThemedView";
 
+// Get screen height to conditionally enable scrolling
+const { height: screenHeight } = Dimensions.get("window");
+
 const SimulacoesScreen = () => {
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [selectedOption, setSelectedOption] = useState<SimulationOption>(null);
+  const [contentHeight, setContentHeight] = useState(0);
 
-  // State variables for Aposentadoria
-  const [desiredMonthlyIncome, setDesiredMonthlyIncome] = useState("");
-  const [retirementAge, setRetirementAge] = useState("");
-  const [currentAge, setCurrentAge] = useState("");
-  const [currentSavings, setCurrentSavings] = useState("");
-  const [retirementInterestRate, setRetirementInterestRate] = useState("");
+  // Group related state variables into objects
+  const [retirementState, setRetirementState] = useState<RetirementState>({
+    desiredMonthlyIncome: "",
+    retirementAge: "",
+    currentAge: "",
+    currentSavings: "",
+    retirementInterestRate: "",
+  });
 
-  // State variables for Tempo para Objetivo
-  const [monthlyInvestment, setMonthlyInvestment] = useState("");
-  const [annualInterestRate, setAnnualInterestRate] = useState("");
-  const [goalAmount, setGoalAmount] = useState("");
+  const [goalState, setGoalState] = useState<GoalState>({
+    monthlyInvestment: "",
+    annualInterestRate: "",
+    goalAmount: "",
+  });
 
-  // State variables for Rendimento
-  const [investedAmount, setInvestedAmount] = useState("");
-  const [yieldPercentage, setYieldPercentage] = useState("");
+  const [yieldState, setYieldState] = useState<YieldState>({
+    investedAmount: "",
+    yieldPercentage: "",
+  });
 
-  const handleOptionSelect = (option) => {
+  const handleOptionSelect = (option: SimulationOption) => {
     setSelectedOption(option);
   };
 
   const resetSimulation = () => {
     setSelectedOption(null);
-    setDesiredMonthlyIncome("");
-    setRetirementAge("");
-    setCurrentAge("");
-    setCurrentSavings("");
-    setRetirementInterestRate("");
-    setMonthlyInvestment("");
-    setAnnualInterestRate("");
-    setGoalAmount("");
-    setInvestedAmount("");
-    setYieldPercentage("");
+    setRetirementState({
+      desiredMonthlyIncome: "",
+      retirementAge: "",
+      currentAge: "",
+      currentSavings: "",
+      retirementInterestRate: "",
+    });
+    setGoalState({
+      monthlyInvestment: "",
+      annualInterestRate: "",
+      goalAmount: "",
+    });
+    setYieldState({
+      investedAmount: "",
+      yieldPercentage: "",
+    });
   };
+
+  // Measure the height of the content
+  const handleContentSizeChange = (width: number, height: number) => {
+    setContentHeight(height);
+  };
+
+  // Reusable Input Component
+  const InputField = ({
+    label,
+    placeholder,
+    value,
+    onChangeText,
+    keyboardType = "numeric",
+  }: {
+    label: string;
+    placeholder: string;
+    value: string;
+    onChangeText: (text: string) => void;
+    keyboardType?: "numeric" | "default";
+  }) => (
+    <>
+      <ThemedText style={styles.label}>{label}</ThemedText>
+      <TextInput
+        style={styles.input}
+        placeholder={placeholder}
+        keyboardType={keyboardType}
+        value={value}
+        onChangeText={onChangeText}
+      />
+    </>
+  );
+
+  // Reusable Button Component
+  const Button = ({
+    title,
+    onPress,
+    style,
+  }: {
+    title: string;
+    onPress: () => void;
+    style?: object;
+  }) => (
+    <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
+      <ThemedText style={styles.buttonText}>{title}</ThemedText>
+    </TouchableOpacity>
+  );
 
   const renderSimulationFields = () => {
     switch (selectedOption) {
       case 1: // Aposentadoria
         return (
           <>
-            <ThemedText style={styles.label}>
-              Renda Mensal Desejada (R$):
-            </ThemedText>
-            <TextInput
-              style={styles.input}
+            <InputField
+              label="Renda Mensal Desejada (R$):"
               placeholder="Ex: 3000"
-              keyboardType="numeric"
-              value={desiredMonthlyIncome}
-              onChangeText={setDesiredMonthlyIncome}
+              value={retirementState.desiredMonthlyIncome}
+              onChangeText={(text) =>
+                setRetirementState({
+                  ...retirementState,
+                  desiredMonthlyIncome: text,
+                })
+              }
             />
-
-            <ThemedText style={styles.label}>
-              Idade de Aposentadoria:
-            </ThemedText>
-            <TextInput
-              style={styles.input}
+            <InputField
+              label="Idade de Aposentadoria:"
               placeholder="Ex: 65"
-              keyboardType="numberic"
-              value={retirementAge}
-              onChangeText={setRetirementAge}
+              value={retirementState.retirementAge}
+              onChangeText={(text) =>
+                setRetirementState({ ...retirementState, retirementAge: text })
+              }
             />
-            <ThemedText style={styles.label}>Idade Atual:</ThemedText>
-            <TextInput
-              style={styles.input}
+            <InputField
+              label="Idade Atual:"
               placeholder="Ex: 30"
-              keyboardType="numberic"
-              value={currentAge}
-              onChangeText={setCurrentAge}
+              value={retirementState.currentAge}
+              onChangeText={(text) =>
+                setRetirementState({ ...retirementState, currentAge: text })
+              }
             />
-            <ThemedText style={styles.label}>Valor economizado:</ThemedText>
-            <TextInput
-              style={styles.input}
-              placeholder="Ex: 30"
-              keyboardType="numberic"
-              value={currentSavings}
-              onChangeText={setCurrentSavings}
+            <InputField
+              label="Valor Economizado:"
+              placeholder="Ex: 50000"
+              value={retirementState.currentSavings}
+              onChangeText={(text) =>
+                setRetirementState({ ...retirementState, currentSavings: text })
+              }
             />
-
-            <ThemedText style={styles.label}>
-              Taxa de Juros Anual (%):
-            </ThemedText>
-            <TextInput
-              style={styles.input}
+            <InputField
+              label="Taxa de Juros Anual (%):"
               placeholder="Ex: 8"
-              keyboardType="numeric"
-              value={retirementInterestRate}
-              onChangeText={setRetirementInterestRate}
+              value={retirementState.retirementInterestRate}
+              onChangeText={(text) =>
+                setRetirementState({
+                  ...retirementState,
+                  retirementInterestRate: text,
+                })
+              }
             />
-
-            <TouchableOpacity style={styles.button}>
-              <ThemedText style={styles.buttonText}>Calcular</ThemedText>
-            </TouchableOpacity>
+            <Button title="Calcular" onPress={() => {}} />
           </>
         );
 
       case 2: // Tempo para Objetivo
         return (
           <>
-            <ThemedText style={styles.label}>
-              Investimento Mensal (R$):
-            </ThemedText>
-            <TextInput
-              style={styles.input}
+            <InputField
+              label="Investimento Mensal (R$):"
               placeholder="Ex: 500"
-              keyboardType="numeric"
-              value={monthlyInvestment}
-              onChangeText={setMonthlyInvestment}
+              value={goalState.monthlyInvestment}
+              onChangeText={(text) =>
+                setGoalState({ ...goalState, monthlyInvestment: text })
+              }
             />
-
-            <ThemedText style={styles.label}>
-              Taxa de Juros Anual (%):
-            </ThemedText>
-            <TextInput
-              style={styles.input}
+            <InputField
+              label="Taxa de Juros Anual (%):"
               placeholder="Ex: 10"
-              keyboardType="numeric"
-              value={annualInterestRate}
-              onChangeText={setAnnualInterestRate}
+              value={goalState.annualInterestRate}
+              onChangeText={(text) =>
+                setGoalState({ ...goalState, annualInterestRate: text })
+              }
             />
-
-            <ThemedText style={styles.label}>Objetivo (R$):</ThemedText>
-            <TextInput
-              style={styles.input}
+            <InputField
+              label="Objetivo (R$):"
               placeholder="Ex: 50000"
-              keyboardType="numeric"
-              value={goalAmount}
-              onChangeText={setGoalAmount}
+              value={goalState.goalAmount}
+              onChangeText={(text) =>
+                setGoalState({ ...goalState, goalAmount: text })
+              }
             />
-
-            <TouchableOpacity style={styles.button}>
-              <ThemedText style={styles.buttonText}>Calcular</ThemedText>
-            </TouchableOpacity>
+            <Button title="Calcular" onPress={() => {}} />
           </>
         );
 
       case 3: // Rendimento
         return (
           <>
-            <ThemedText style={styles.label}>Valor Investido (R$):</ThemedText>
-            <TextInput
-              style={styles.input}
+            <InputField
+              label="Valor Investido (R$):"
               placeholder="Ex: 10000"
-              keyboardType="numeric"
-              value={investedAmount}
-              onChangeText={setInvestedAmount}
+              value={yieldState.investedAmount}
+              onChangeText={(text) =>
+                setYieldState({ ...yieldState, investedAmount: text })
+              }
             />
-
-            <ThemedText style={styles.label}>
-              Taxa de Rendimento Anual (%):
-            </ThemedText>
-            <TextInput
-              style={styles.input}
+            <InputField
+              label="Taxa de Rendimento Anual (%):"
               placeholder="Ex: 7"
-              keyboardType="numeric"
-              value={yieldPercentage}
-              onChangeText={setYieldPercentage}
+              value={yieldState.yieldPercentage}
+              onChangeText={(text) =>
+                setYieldState({ ...yieldState, yieldPercentage: text })
+              }
             />
-
-            <TouchableOpacity style={styles.button}>
-              <ThemedText style={styles.buttonText}>Calcular</ThemedText>
-            </TouchableOpacity>
+            <Button title="Calcular" onPress={() => {}} />
           </>
         );
 
@@ -182,71 +223,40 @@ const SimulacoesScreen = () => {
 
   return (
     <ThemedView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <ScrollView
+        contentContainerStyle={styles.scrollViewContent}
+        scrollEnabled={contentHeight > screenHeight} // Enable scrolling only if content exceeds screen height
+        onContentSizeChange={handleContentSizeChange} // Measure content height
+      >
         <ThemedView style={styles.content}>
           <ThemedText type="title" style={styles.title}>
             Simulações Financeiras
           </ThemedText>
 
-          {selectedOption === null && ( // Conditionally render buttons
+          {selectedOption === null && (
             <View style={styles.optionsContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.optionButton,
-                  selectedOption === 1 && styles.optionButtonSelected,
-                ]}
-                onPress={() => handleOptionSelect(1)}
-              >
-                <ThemedText
+              {[1, 2, 3].map((option) => (
+                <Button
+                  key={option}
+                  title={
+                    option === 1
+                      ? "Aposentadoria"
+                      : option === 2
+                      ? "Tempo para Objetivo"
+                      : "Rendimento"
+                  }
+                  onPress={() => handleOptionSelect(option as SimulationOption)}
                   style={[
-                    styles.optionButtonText,
-                    selectedOption === 1 && styles.optionButtonTextSelected,
+                    styles.optionButton,
+                    selectedOption === option && styles.optionButtonSelected,
                   ]}
-                >
-                  Aposentadoria
-                </ThemedText>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.optionButton,
-                  selectedOption === 2 && styles.optionButtonSelected,
-                ]}
-                onPress={() => handleOptionSelect(2)}
-              >
-                <ThemedText
-                  style={[
-                    styles.optionButtonText,
-                    selectedOption === 2 && styles.optionButtonTextSelected,
-                  ]}
-                >
-                  Tempo para Objetivo
-                </ThemedText>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.optionButton,
-                  selectedOption === 3 && styles.optionButtonSelected,
-                ]}
-                onPress={() => handleOptionSelect(3)}
-              >
-                <ThemedText
-                  style={[
-                    styles.optionButtonText,
-                    selectedOption === 3 && styles.optionButtonTextSelected,
-                  ]}
-                >
-                  Rendimento
-                </ThemedText>
-              </TouchableOpacity>
+                />
+              ))}
             </View>
           )}
 
           {selectedOption !== null && (
-            <TouchableOpacity style={styles.button} onPress={resetSimulation}>
-              <ThemedText style={styles.buttonText}>Voltar</ThemedText>
-            </TouchableOpacity>
+            <Button title="Voltar" onPress={resetSimulation} />
           )}
 
           {renderSimulationFields()}
@@ -279,13 +289,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#2e78b7",
   },
-  description: {
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 20,
-    color: "#666",
-    paddingHorizontal: 20,
-  },
   optionsContainer: {
     flexDirection: "column",
     alignItems: "stretch",
@@ -304,15 +307,6 @@ const styles = StyleSheet.create({
   },
   optionButtonSelected: {
     backgroundColor: "#2e78b7",
-  },
-  optionButtonText: {
-    color: "#2e78b7",
-    fontSize: 14,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  optionButtonTextSelected: {
-    color: "white",
   },
   label: {
     fontSize: 16,
@@ -339,15 +333,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
-  },
-  result: {
-    fontSize: 16,
-    marginTop: 20,
-    textAlign: "left",
-    wordWrap: "break-word",
-  },
-  multilineResult: {
-    lineHeight: 24,
   },
 });
 
