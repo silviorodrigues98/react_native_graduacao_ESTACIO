@@ -11,7 +11,6 @@ import { ThemedView } from "../../components/ThemedView";
 
 const SimulacoesScreen = () => {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
-  const [result, setResult] = useState("");
 
   // State variables for Aposentadoria
   const [desiredMonthlyIncome, setDesiredMonthlyIncome] = useState("");
@@ -29,21 +28,12 @@ const SimulacoesScreen = () => {
   const [investedAmount, setInvestedAmount] = useState("");
   const [yieldPercentage, setYieldPercentage] = useState("");
 
-  const calculateTaxRate = (months: number) => {
-    if (months <= 6) return 0.225; // até 180 dias
-    if (months <= 12) return 0.2; // 181 a 360 dias
-    if (months <= 24) return 0.175; // 361 a 720 dias
-    return 0.15; // acima de 720 dias
-  };
-
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
-    setResult("");
   };
 
   const resetSimulation = () => {
     setSelectedOption(null);
-    setResult("");
     setDesiredMonthlyIncome("");
     setRetirementAge("");
     setCurrentAge("");
@@ -54,98 +44,6 @@ const SimulacoesScreen = () => {
     setGoalAmount("");
     setInvestedAmount("");
     setYieldPercentage("");
-  };
-
-  const calculateRetirement = () => {
-    // Basic Validation
-    if (
-      !desiredMonthlyIncome ||
-      !retirementAge ||
-      !currentAge ||
-      !retirementInterestRate
-    ) {
-      setResult("Preencha todos os campos.");
-      return;
-    }
-
-    const income = parseFloat(desiredMonthlyIncome);
-    const rAge = parseInt(retirementAge);
-    const cAge = parseInt(currentAge);
-    const savings = parseFloat(currentSavings || 0); // Default to 0
-    const rate = parseFloat(retirementInterestRate) / 100 / 12;
-
-    const yearsToRetirement = rAge - cAge;
-    const monthsToRetirement = yearsToRetirement * 12;
-
-    let requiredSavings = 0;
-
-    if (rate > 0) {
-      // Assuming you can withdraw interest only without touching the principal
-      requiredSavings = income / rate;
-    } else {
-      // If no interest, you would need infinite savings to withdraw monthly
-      requiredSavings = Infinity;
-    }
-    setResult(
-      `Para ter R$${income.toFixed(
-        2
-      )} por mês na aposentadoria, você precisa ter R$${requiredSavings.toFixed(
-        2
-      )}`
-    );
-  };
-
-  const calculateTimeForGoal = () => {
-    if (!monthlyInvestment || !annualInterestRate || !goalAmount) {
-      setResult("Preencha todos os campos.");
-      return;
-    }
-
-    const monthly = parseFloat(monthlyInvestment);
-    const rate = parseFloat(annualInterestRate) / 100 / 12;
-    const goal = parseFloat(goalAmount);
-
-    if (rate === 0) {
-      const timeToGoal = goal / monthly;
-      setResult(
-        `Levará ${timeToGoal.toFixed(2)} meses para atingir o objetivo.`
-      );
-    } else {
-      let months = 0;
-      let balance = 0;
-      while (balance < goal && months < 1200) {
-        // Prevent infinite loops
-        balance = (balance + monthly) * (1 + rate);
-        months++;
-      }
-
-      if (months === 1200) {
-        setResult("Não será possível atingir o objetivo com esses valores.");
-      } else {
-        setResult(`Levará ${months} meses para atingir o objetivo.`);
-      }
-    }
-  };
-
-  const calculateYield = () => {
-    if (!investedAmount || !yieldPercentage) {
-      setResult("Preencha todos os campos.");
-      return;
-    }
-
-    const invested = parseFloat(investedAmount);
-    const rate = parseFloat(yieldPercentage) / 100;
-
-    const dailyYield = (invested * rate) / 365;
-    const monthlyYield = (invested * rate) / 12;
-    const annualYield = invested * rate;
-
-    setResult(
-      `Rendimento:\n\n` +
-        `Diário: R$ ${dailyYield.toFixed(2)}\n` +
-        `Mensal: R$ ${monthlyYield.toFixed(2)}\n` +
-        `Anual: R$ ${annualYield.toFixed(2)}`
-    );
   };
 
   const renderSimulationFields = () => {
@@ -202,10 +100,7 @@ const SimulacoesScreen = () => {
               onChangeText={setRetirementInterestRate}
             />
 
-            <TouchableOpacity
-              style={styles.button}
-              onPress={calculateRetirement}
-            >
+            <TouchableOpacity style={styles.button}>
               <ThemedText style={styles.buttonText}>Calcular</ThemedText>
             </TouchableOpacity>
           </>
@@ -245,10 +140,7 @@ const SimulacoesScreen = () => {
               onChangeText={setGoalAmount}
             />
 
-            <TouchableOpacity
-              style={styles.button}
-              onPress={calculateTimeForGoal}
-            >
+            <TouchableOpacity style={styles.button}>
               <ThemedText style={styles.buttonText}>Calcular</ThemedText>
             </TouchableOpacity>
           </>
@@ -277,7 +169,7 @@ const SimulacoesScreen = () => {
               onChangeText={setYieldPercentage}
             />
 
-            <TouchableOpacity style={styles.button} onPress={calculateYield}>
+            <TouchableOpacity style={styles.button}>
               <ThemedText style={styles.buttonText}>Calcular</ThemedText>
             </TouchableOpacity>
           </>
@@ -358,12 +250,6 @@ const SimulacoesScreen = () => {
           )}
 
           {renderSimulationFields()}
-
-          {result ? (
-            <ThemedText style={[styles.result, styles.multilineResult]}>
-              {result}
-            </ThemedText>
-          ) : null}
         </ThemedView>
       </ScrollView>
     </ThemedView>
