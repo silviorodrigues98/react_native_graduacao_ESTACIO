@@ -5,8 +5,11 @@ import {
   TouchableOpacity,
   TextInput,
   StyleSheet,
+  Dimensions,
 } from "react-native";
 import { Stack } from "expo-router";
+
+const { width } = Dimensions.get("window");
 
 export default function ButtonsPage() {
   const [activeButton, setActiveButton] = useState(null);
@@ -29,7 +32,7 @@ export default function ButtonsPage() {
               style={[styles.button, styles.returnButton]}
               onPress={() => setActiveButton(null)}
             >
-              <Text style={styles.buttonText}>Return</Text>
+              <Text style={styles.buttonText}>Voltar</Text>
             </TouchableOpacity>
           </View>
         );
@@ -48,7 +51,7 @@ export default function ButtonsPage() {
               style={[styles.button, styles.returnButton]}
               onPress={() => setActiveButton(null)}
             >
-              <Text style={styles.buttonText}>Return</Text>
+              <Text style={styles.buttonText}>Voltar</Text>
             </TouchableOpacity>
           </View>
         );
@@ -67,7 +70,7 @@ export default function ButtonsPage() {
               style={[styles.button, styles.returnButton]}
               onPress={() => setActiveButton(null)}
             >
-              <Text style={styles.buttonText}>Return</Text>
+              <Text style={styles.buttonText}>Voltar</Text>
             </TouchableOpacity>
           </View>
         );
@@ -78,21 +81,27 @@ export default function ButtonsPage() {
               style={[styles.button, styles.button1]}
               onPress={() => setActiveButton(1)}
             >
-              <Text style={styles.buttonText}>Button 1</Text>
+              <Text style={styles.buttonText}>
+                Quero juntar um montante para um objetivo
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.button, styles.button2]}
               onPress={() => setActiveButton(2)}
             >
-              <Text style={styles.buttonText}>Button 2</Text>
+              <Text style={styles.buttonText}>
+                Desejo gerar uma renda mensal, para aposentadoria
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.button, styles.button3]}
               onPress={() => setActiveButton(3)}
             >
-              <Text style={styles.buttonText}>Button 3</Text>
+              <Text style={styles.buttonText}>
+                Ja tenho investimentos e desejo saber quanto rendem
+              </Text>
             </TouchableOpacity>
           </View>
         );
@@ -102,11 +111,8 @@ export default function ButtonsPage() {
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: "Buttons Demo" }} />
-
-      <Text style={styles.mockText}>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua.
-      </Text>
+      <Text style={styles.title}>Simule seus investivementos!</Text>
+      <Text style={styles.mockText}>Qual simulação voce deseja fazer?</Text>
 
       {renderContent()}
     </View>
@@ -118,6 +124,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
     padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    textAlign: "center",
+    marginBottom: 20,
   },
   mockText: {
     fontSize: 16,
@@ -180,6 +193,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginTop: 20,
-    width: "80%",
+    width: width > 600 ? "50%" : "80%", // Adjust width based on screen size
   },
 });
