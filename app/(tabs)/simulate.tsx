@@ -1,9 +1,16 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  StyleSheet,
+} from "react-native";
 import { Stack } from "expo-router";
 
 export default function ButtonsPage() {
   const [activeButton, setActiveButton] = useState(null);
+  const [inputValue, setInputValue] = useState("");
 
   const renderContent = () => {
     switch (activeButton) {
@@ -11,6 +18,12 @@ export default function ButtonsPage() {
         return (
           <View style={styles.contentContainer}>
             <Text style={styles.innerContent}>Content for Button 1</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter text for Button 1"
+              value={inputValue}
+              onChangeText={setInputValue}
+            />
             <TouchableOpacity
               style={[styles.button, styles.returnButton]}
               onPress={() => setActiveButton(null)}
@@ -23,6 +36,12 @@ export default function ButtonsPage() {
         return (
           <View style={styles.contentContainer}>
             <Text style={styles.innerContent}>Content for Button 2</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter text for Button 2"
+              value={inputValue}
+              onChangeText={setInputValue}
+            />
             <TouchableOpacity
               style={[styles.button, styles.returnButton]}
               onPress={() => setActiveButton(null)}
@@ -35,6 +54,12 @@ export default function ButtonsPage() {
         return (
           <View style={styles.contentContainer}>
             <Text style={styles.innerContent}>Content for Button 3</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter text for Button 3"
+              value={inputValue}
+              onChangeText={setInputValue}
+            />
             <TouchableOpacity
               style={[styles.button, styles.returnButton]}
               onPress={() => setActiveButton(null)}
@@ -144,5 +169,14 @@ const styles = StyleSheet.create({
   returnButton: {
     backgroundColor: "#333",
     marginTop: 20,
+  },
+  input: {
+    height: 40,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginTop: 20,
+    width: "80%",
   },
 });
