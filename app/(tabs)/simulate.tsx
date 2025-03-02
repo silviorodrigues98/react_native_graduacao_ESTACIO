@@ -20,9 +20,10 @@ export default function ButtonsPage() {
             <Text style={styles.innerContent}>Content for Button 1</Text>
             <TextInput
               style={styles.input}
-              placeholder="Enter text for Button 1"
+              placeholder="Enter number for Button 1"
               value={inputValue}
               onChangeText={setInputValue}
+              keyboardType="numeric"
             />
             <TouchableOpacity
               style={[styles.button, styles.returnButton]}
@@ -38,9 +39,10 @@ export default function ButtonsPage() {
             <Text style={styles.innerContent}>Content for Button 2</Text>
             <TextInput
               style={styles.input}
-              placeholder="Enter text for Button 2"
+              placeholder="Enter number for Button 2"
               value={inputValue}
               onChangeText={setInputValue}
+              keyboardType="numeric"
             />
             <TouchableOpacity
               style={[styles.button, styles.returnButton]}
@@ -56,9 +58,10 @@ export default function ButtonsPage() {
             <Text style={styles.innerContent}>Content for Button 3</Text>
             <TextInput
               style={styles.input}
-              placeholder="Enter text for Button 3"
+              placeholder="Enter number for Button 3"
               value={inputValue}
               onChangeText={setInputValue}
+              keyboardType="numeric"
             />
             <TouchableOpacity
               style={[styles.button, styles.returnButton]}
