@@ -138,28 +138,28 @@ const styles = StyleSheet.create({
   },
   button: {
     width: "60%", // Take up 60% of the container width
-     // Maximum width for larger screens
-      padding: 15,
-      borderRadius: 10,
-      alignItems: "center",
-      justifyContent: "center",
-      elevation: 3,
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      },
-      button1: {
-      backgroundColor: "#4A90E2",
-      },
-      button2: {
-      backgroundColor: "#50C878",
-      },
-      button3: {
-      backgroundColor: "#ADD8E6", // Lighter blue color
+    maxWidth: 280, // Maximum width for larger screens
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  button1: {
+    backgroundColor: "#4A90E2",
+  },
+  button2: {
+    backgroundColor: "#50C878",
+  },
+  button3: {
+    backgroundColor: "#ADD8E6", // Lighter blue color
   },
   buttonText: {
     color: "#FFFFFF",
@@ -178,6 +178,7 @@ const styles = StyleSheet.create({
   returnButton: {
     backgroundColor: "#333",
     marginTop: 20,
+    width: width > 600 ? "30%" : "60%", // Adjust width based on screen size
   },
   input: {
     height: 40,
@@ -186,6 +187,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginTop: 20,
-    width: width > 600 ? "50%" : "80%", // Adjust
+    width: width > 600 ? "50%" : "80%", // Adjust width based on screen size
   },
 });
