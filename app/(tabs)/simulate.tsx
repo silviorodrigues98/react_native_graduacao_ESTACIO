@@ -1,7 +1,46 @@
+import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Stack } from "expo-router";
 
 export default function ButtonsPage() {
+  const [activeButton, setActiveButton] = useState(null);
+
+  const renderContent = () => {
+    switch (activeButton) {
+      case 1:
+        return <Text style={styles.innerContent}>Content for Button 1</Text>;
+      case 2:
+        return <Text style={styles.innerContent}>Content for Button 2</Text>;
+      case 3:
+        return <Text style={styles.innerContent}>Content for Button 3</Text>;
+      default:
+        return (
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.button, styles.button1]}
+              onPress={() => setActiveButton(1)}
+            >
+              <Text style={styles.buttonText}>Button 1</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.button, styles.button2]}
+              onPress={() => setActiveButton(2)}
+            >
+              <Text style={styles.buttonText}>Button 2</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.button, styles.button3]}
+              onPress={() => setActiveButton(3)}
+            >
+              <Text style={styles.buttonText}>Button 3</Text>
+            </TouchableOpacity>
+          </View>
+        );
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: "Buttons Demo" }} />
@@ -11,28 +50,7 @@ export default function ButtonsPage() {
         tempor incididunt ut labore et dolore magna aliqua.
       </Text>
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={[styles.button, styles.button1]}
-          onPress={() => alert("Button 1 pressed")}
-        >
-          <Text style={styles.buttonText}>Button 1</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.button, styles.button2]}
-          onPress={() => alert("Button 2 pressed")}
-        >
-          <Text style={styles.buttonText}>Button 2</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.button, styles.button3]}
-          onPress={() => alert("Button 3 pressed")}
-        >
-          <Text style={styles.buttonText}>Button 3</Text>
-        </TouchableOpacity>
-      </View>
+      {renderContent()}
     </View>
   );
 }
@@ -83,5 +101,11 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "600",
+  },
+  innerContent: {
+    fontSize: 18,
+    color: "#333",
+    textAlign: "center",
+    marginTop: 20,
   },
 });
