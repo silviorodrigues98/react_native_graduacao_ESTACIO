@@ -8,11 +8,41 @@ export default function ButtonsPage() {
   const renderContent = () => {
     switch (activeButton) {
       case 1:
-        return <Text style={styles.innerContent}>Content for Button 1</Text>;
+        return (
+          <View style={styles.contentContainer}>
+            <Text style={styles.innerContent}>Content for Button 1</Text>
+            <TouchableOpacity
+              style={[styles.button, styles.returnButton]}
+              onPress={() => setActiveButton(null)}
+            >
+              <Text style={styles.buttonText}>Return</Text>
+            </TouchableOpacity>
+          </View>
+        );
       case 2:
-        return <Text style={styles.innerContent}>Content for Button 2</Text>;
+        return (
+          <View style={styles.contentContainer}>
+            <Text style={styles.innerContent}>Content for Button 2</Text>
+            <TouchableOpacity
+              style={[styles.button, styles.returnButton]}
+              onPress={() => setActiveButton(null)}
+            >
+              <Text style={styles.buttonText}>Return</Text>
+            </TouchableOpacity>
+          </View>
+        );
       case 3:
-        return <Text style={styles.innerContent}>Content for Button 3</Text>;
+        return (
+          <View style={styles.contentContainer}>
+            <Text style={styles.innerContent}>Content for Button 3</Text>
+            <TouchableOpacity
+              style={[styles.button, styles.returnButton]}
+              onPress={() => setActiveButton(null)}
+            >
+              <Text style={styles.buttonText}>Return</Text>
+            </TouchableOpacity>
+          </View>
+        );
       default:
         return (
           <View style={styles.buttonContainer}>
@@ -106,6 +136,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#333",
     textAlign: "center",
+    marginTop: 20,
+  },
+  contentContainer: {
+    alignItems: "center",
+  },
+  returnButton: {
+    backgroundColor: "#333",
     marginTop: 20,
   },
 });
