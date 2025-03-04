@@ -1,5 +1,12 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, Dimensions } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
 import { Stack } from "expo-router";
 
 const { width } = Dimensions.get("window");
@@ -7,6 +14,25 @@ const { width } = Dimensions.get("window");
 export default function ButtonsPage() {
   const [activeButton, setActiveButton] = useState(null);
   const [inputValue, setInputValue] = useState("");
+  const [profitPercentage, setProfitPercentage] = useState(null);
+
+  useEffect(() => {
+    const fetchProfitPercentage = async () => {
+      try {
+        const response = await fetch(
+          "https://api.bcb.gov.br/dados/serie/bcdata.sgs.4189/dados?formato=json"
+        );
+        const data = await response.json();
+        if (data && data.length > 0) {
+          setProfitPercentage(data[data.length - 1].valor); // Assuming the latest value is needed
+        }
+      } catch (error) {
+        console.error("Error fetching profit percentage:", error);
+      }
+    };
+
+    fetchProfitPercentage();
+  }, []);
 
   const renderContent = () => {
     switch (activeButton) {
@@ -106,7 +132,11 @@ export default function ButtonsPage() {
       <Stack.Screen options={{ title: "Buttons Demo" }} />
       <Text style={styles.title}>Simule seus investivementos!</Text>
       <Text style={styles.mockText}>Qual simulação voce deseja fazer?</Text>
-
+      {profitPercentage !== null && (
+        <Text style={styles.profitText}>
+          Current Profit Percentage: {profitPercentage}%
+        </Text>
+      )}
       {renderContent()}
     </View>
   );
@@ -131,6 +161,12 @@ const styles = StyleSheet.create({
     color: "#333",
     marginBottom: 40,
     textAlign: "center",
+  },
+  profitText: {
+    fontSize: 18,
+    color: "#333",
+    textAlign: "center",
+    marginBottom: 20,
   },
   buttonContainer: {
     gap: 20,
