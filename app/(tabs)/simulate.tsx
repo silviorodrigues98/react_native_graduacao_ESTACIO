@@ -4,6 +4,7 @@ import {
   TextInput,
   StyleSheet,
   Dimensions,
+  useColorScheme,
 } from "react-native";
 import { Stack } from "expo-router";
 import { ThemedText } from "../../components/ThemedText";
@@ -15,6 +16,7 @@ export default function ButtonsPage() {
   const [activeButton, setActiveButton] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [profitPercentage, setProfitPercentage] = useState(null);
+  const colorScheme = useColorScheme();
 
   useEffect(() => {
     const fetchProfitPercentage = async () => {
@@ -43,11 +45,15 @@ export default function ButtonsPage() {
               Content for Button 1
             </ThemedText>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                { color: colorScheme === "dark" ? "#fff" : "#000" },
+              ]}
               placeholder="Enter number for Button 1"
               value={inputValue}
               onChangeText={setInputValue}
               keyboardType="numeric"
+              placeholderTextColor={colorScheme === "dark" ? "#aaa" : "#555"}
             />
             <TouchableOpacity
               style={[styles.button, styles.returnButton]}
@@ -64,11 +70,15 @@ export default function ButtonsPage() {
               Content for Button 2
             </ThemedText>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                { color: colorScheme === "dark" ? "#fff" : "#000" },
+              ]}
               placeholder="Enter number for Button 2"
               value={inputValue}
               onChangeText={setInputValue}
               keyboardType="numeric"
+              placeholderTextColor={colorScheme === "dark" ? "#aaa" : "#555"}
             />
             <TouchableOpacity
               style={[styles.button, styles.returnButton]}
@@ -85,11 +95,15 @@ export default function ButtonsPage() {
               Content for Button 3
             </ThemedText>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                { color: colorScheme === "dark" ? "#fff" : "#000" },
+              ]}
               placeholder="Enter number for Button 3"
               value={inputValue}
               onChangeText={setInputValue}
               keyboardType="numeric"
+              placeholderTextColor={colorScheme === "dark" ? "#aaa" : "#555"}
             />
             <TouchableOpacity
               style={[styles.button, styles.returnButton]}
@@ -148,11 +162,18 @@ export default function ButtonsPage() {
       )}
       <ThemedView style={{ alignItems: "center" }}>
         <TextInput
-          style={[styles.input, { marginVertical: 20 }]}
+          style={[
+            styles.input,
+            {
+              marginVertical: 20,
+              color: colorScheme === "dark" ? "#fff" : "#000",
+            },
+          ]}
           placeholder="Rendimento do seu investimento, sobre o CDI, exemplo 100, 105%, 110%, etc..."
           value={inputValue}
           onChangeText={setInputValue}
           keyboardType="numeric"
+          placeholderTextColor={colorScheme === "dark" ? "#aaa" : "#555"}
         />
       </ThemedView>
       {renderContent()}
