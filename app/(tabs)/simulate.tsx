@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Dimensions,
   useColorScheme,
+  ActivityIndicator,
 } from "react-native";
 import { Stack } from "expo-router";
 import { ThemedText } from "../../components/ThemedText";
@@ -16,6 +17,7 @@ export default function ButtonsPage() {
   const [activeButton, setActiveButton] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [profitPercentage, setProfitPercentage] = useState(null);
+  const [loading, setLoading] = useState(true);
   const colorScheme = useColorScheme();
 
   useEffect(() => {
@@ -30,6 +32,8 @@ export default function ButtonsPage() {
         }
       } catch (error) {
         console.error("Error fetching profit percentage:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -155,10 +159,17 @@ export default function ButtonsPage() {
         A simulação sera feita usando como base um investimento de CDB que rende
         uma porcentagem do CDI.
       </ThemedText>
-      {profitPercentage !== null && (
-        <ThemedText style={styles.profitText}>
-          Taxa CDI atual: {profitPercentage}%
-        </ThemedText>
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color={colorScheme === "dark" ? "#fff" : "#000"}
+        />
+      ) : (
+        profitPercentage !== null && (
+          <ThemedText style={styles.profitText}>
+            Taxa CDI atual: {profitPercentage}%
+          </ThemedText>
+        )
       )}
       <ThemedView style={{ alignItems: "center" }}>
         <TextInput
