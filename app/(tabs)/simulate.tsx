@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import {
-  View,
-  Text,
   TouchableOpacity,
   TextInput,
   StyleSheet,
   Dimensions,
 } from "react-native";
 import { Stack } from "expo-router";
+import { ThemedText } from "../../components/ThemedText";
+import { ThemedView } from "../../components/ThemedView";
 
 const { width } = Dimensions.get("window");
 
@@ -38,8 +38,10 @@ export default function ButtonsPage() {
     switch (activeButton) {
       case 1:
         return (
-          <View style={styles.contentContainer}>
-            <Text style={styles.innerContent}>Content for Button 1</Text>
+          <ThemedView style={styles.contentContainer}>
+            <ThemedText style={styles.innerContent}>
+              Content for Button 1
+            </ThemedText>
             <TextInput
               style={styles.input}
               placeholder="Enter number for Button 1"
@@ -51,14 +53,16 @@ export default function ButtonsPage() {
               style={[styles.button, styles.returnButton]}
               onPress={() => setActiveButton(null)}
             >
-              <Text style={styles.buttonText}>Voltar</Text>
+              <ThemedText style={styles.buttonText}>Voltar</ThemedText>
             </TouchableOpacity>
-          </View>
+          </ThemedView>
         );
       case 2:
         return (
-          <View style={styles.contentContainer}>
-            <Text style={styles.innerContent}>Content for Button 2</Text>
+          <ThemedView style={styles.contentContainer}>
+            <ThemedText style={styles.innerContent}>
+              Content for Button 2
+            </ThemedText>
             <TextInput
               style={styles.input}
               placeholder="Enter number for Button 2"
@@ -70,14 +74,16 @@ export default function ButtonsPage() {
               style={[styles.button, styles.returnButton]}
               onPress={() => setActiveButton(null)}
             >
-              <Text style={styles.buttonText}>Voltar</Text>
+              <ThemedText style={styles.buttonText}>Voltar</ThemedText>
             </TouchableOpacity>
-          </View>
+          </ThemedView>
         );
       case 3:
         return (
-          <View style={styles.contentContainer}>
-            <Text style={styles.innerContent}>Content for Button 3</Text>
+          <ThemedView style={styles.contentContainer}>
+            <ThemedText style={styles.innerContent}>
+              Content for Button 3
+            </ThemedText>
             <TextInput
               style={styles.input}
               placeholder="Enter number for Button 3"
@@ -89,82 +95,90 @@ export default function ButtonsPage() {
               style={[styles.button, styles.returnButton]}
               onPress={() => setActiveButton(null)}
             >
-              <Text style={styles.buttonText}>Voltar</Text>
+              <ThemedText style={styles.buttonText}>Voltar</ThemedText>
             </TouchableOpacity>
-          </View>
+          </ThemedView>
         );
       default:
         return (
-          <View style={styles.buttonContainer}>
+          <ThemedView style={styles.buttonContainer}>
             <TouchableOpacity
               style={[styles.button, styles.button1]}
               onPress={() => setActiveButton(1)}
             >
-              <Text style={styles.buttonText}>
+              <ThemedText style={styles.buttonText}>
                 Quero juntar um montante para um objetivo
-              </Text>
+              </ThemedText>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.button, styles.button2]}
               onPress={() => setActiveButton(2)}
             >
-              <Text style={styles.buttonText}>
+              <ThemedText style={styles.buttonText}>
                 Desejo gerar uma renda mensal, para aposentadoria
-              </Text>
+              </ThemedText>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.button, styles.button3]}
               onPress={() => setActiveButton(3)}
             >
-              <Text style={styles.buttonText}>
+              <ThemedText style={styles.buttonText}>
                 Ja tenho investimentos e desejo saber quanto rendem
-              </Text>
+              </ThemedText>
             </TouchableOpacity>
-          </View>
+          </ThemedView>
         );
     }
   };
 
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       <Stack.Screen options={{ title: "Buttons Demo" }} />
-      <Text style={styles.title}>Simule seus investivementos!</Text>
-      <Text style={styles.mockText}>Qual simulação voce deseja fazer?</Text>
+      <ThemedText style={styles.title}>Simule seus investimentos!</ThemedText>
+      <ThemedText style={styles.mockText}>
+        A simulação sera feita usando como base um investimento de CDB que rende
+        uma porcentagem do CDI.
+      </ThemedText>
       {profitPercentage !== null && (
-        <Text style={styles.profitText}>
-          Current Profit Percentage: {profitPercentage}%
-        </Text>
+        <ThemedText style={styles.profitText}>
+          Taxa CDI atual: {profitPercentage}%
+        </ThemedText>
       )}
+      <ThemedView style={{ alignItems: "center" }}>
+        <TextInput
+          style={[styles.input, { marginVertical: 20 }]}
+          placeholder="Rendimento do seu investimento, sobre o CDI, exemplo 100, 105%, 110%, etc..."
+          value={inputValue}
+          onChangeText={setInputValue}
+          keyboardType="numeric"
+        />
+      </ThemedView>
       {renderContent()}
-    </View>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
     padding: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#333",
     textAlign: "center",
     marginBottom: 20,
   },
   mockText: {
     fontSize: 16,
     lineHeight: 24,
-    color: "#333",
     marginBottom: 40,
     textAlign: "center",
   },
   profitText: {
     fontSize: 18,
-    color: "#333",
     textAlign: "center",
     marginBottom: 20,
   },
@@ -204,7 +218,6 @@ const styles = StyleSheet.create({
   },
   innerContent: {
     fontSize: 18,
-    color: "#333",
     textAlign: "center",
     marginTop: 20,
   },
