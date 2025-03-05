@@ -154,7 +154,9 @@ export default function ButtonsPage() {
   return (
     <ThemedView style={styles.container}>
       <Stack.Screen options={{ title: "Buttons Demo" }} />
-      <ThemedText style={styles.title}>Simule seus investimentos!</ThemedText>
+      <ThemedText type="title" style={[styles.title, { marginTop: 80 }]}>
+        Simule seus investimentos!
+      </ThemedText>
       <ThemedText style={styles.mockText}>
         A simulação sera feita usando como base um investimento de CDB que rende
         uma porcentagem do CDI.
