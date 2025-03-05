@@ -6,6 +6,7 @@ import {
   Dimensions,
   useColorScheme,
   ActivityIndicator,
+  ScrollView, // Import ScrollView
 } from "react-native";
 import { Stack } from "expo-router";
 import { ThemedText } from "../../components/ThemedText";
@@ -152,57 +153,62 @@ export default function ButtonsPage() {
   };
 
   return (
-    <ThemedView style={styles.container}>
-      <Stack.Screen options={{ title: "Buttons Demo" }} />
-      <ThemedText type="title" style={[styles.title, { marginTop: 80 }]}>
-        Simule seus investimentos!
-      </ThemedText>
-      <ThemedText style={styles.mockText}>
-        A simulação sera feita usando como base um investimento de CDB que rende
-        uma porcentagem do CDI.
-      </ThemedText>
-      {loading ? (
-        <ActivityIndicator
-          size="large"
-          color={colorScheme === "dark" ? "#fff" : "#000"}
-        />
-      ) : (
-        profitPercentage !== null && (
-          <ThemedText style={[styles.profitText, { fontWeight: "bold" }]}>
-            Taxa CDI atual: {profitPercentage}%
-          </ThemedText>
-        )
-      )}
-      <ThemedView style={{ alignItems: "center" }}>
-        <ThemedText style={{ textAlign: "center", marginBottom: 10 }}>
-          Insira a porcentagem do CDI do seu investimento:
+    <ScrollView style={styles.scrollContainer}>
+      <ThemedView style={styles.container}>
+        <Stack.Screen options={{ title: "Buttons Demo" }} />
+        <ThemedText type="title" style={[styles.title, { marginTop: 80 }]}>
+          Simule seus investimentos!
         </ThemedText>
-        <TextInput
-          style={[
-            styles.input,
-            {
-              marginVertical: 20,
-              color: colorScheme === "dark" ? "#fff" : "#000",
-              width: width > 600 ? "30%" : "80%", // Adjust width based on screen size
-              textAlign: "center", // Center the text inside the input
-            },
-          ]}
-          placeholder="EX: 100%"
-          value={inputValue}
-          onChangeText={(text) => {
-            const numericValue = text.replace(/[^0-9]/g, "");
-            setInputValue(numericValue);
-          }}
-          keyboardType="numeric"
-          placeholderTextColor={colorScheme === "dark" ? "#aaa" : "#555"}
-        />
+        <ThemedText style={styles.mockText}>
+          A simulação sera feita usando como base um investimento de CDB que
+          rende uma porcentagem do CDI.
+        </ThemedText>
+        {loading ? (
+          <ActivityIndicator
+            size="large"
+            color={colorScheme === "dark" ? "#fff" : "#000"}
+          />
+        ) : (
+          profitPercentage !== null && (
+            <ThemedText style={[styles.profitText, { fontWeight: "bold" }]}>
+              Taxa CDI atual: {profitPercentage}%
+            </ThemedText>
+          )
+        )}
+        <ThemedView style={{ alignItems: "center" }}>
+          <ThemedText style={{ textAlign: "center", marginBottom: 10 }}>
+            Insira a porcentagem do CDI do seu investimento:
+          </ThemedText>
+          <TextInput
+            style={[
+              styles.input,
+              {
+                marginVertical: 20,
+                color: colorScheme === "dark" ? "#fff" : "#000",
+                width: width > 600 ? "30%" : "80%", // Adjust width based on screen size
+                textAlign: "center", // Center the text inside the input
+              },
+            ]}
+            placeholder="EX: 100%"
+            value={inputValue}
+            onChangeText={(text) => {
+              const numericValue = text.replace(/[^0-9]/g, "");
+              setInputValue(numericValue);
+            }}
+            keyboardType="numeric"
+            placeholderTextColor={colorScheme === "dark" ? "#aaa" : "#555"}
+          />
+        </ThemedView>
+        {renderContent()}
       </ThemedView>
-      {renderContent()}
-    </ThemedView>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     padding: 20,
