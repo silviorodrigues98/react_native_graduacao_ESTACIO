@@ -166,23 +166,31 @@ export default function ButtonsPage() {
         />
       ) : (
         profitPercentage !== null && (
-          <ThemedText style={styles.profitText}>
+          <ThemedText style={[styles.profitText, { fontWeight: "bold" }]}>
             Taxa CDI atual: {profitPercentage}%
           </ThemedText>
         )
       )}
       <ThemedView style={{ alignItems: "center" }}>
+        <ThemedText style={{ textAlign: "center", marginBottom: 10 }}>
+          Insira a porcentagem do CDI do seu investimento:
+        </ThemedText>
         <TextInput
           style={[
             styles.input,
             {
               marginVertical: 20,
               color: colorScheme === "dark" ? "#fff" : "#000",
+              width: width > 600 ? "30%" : "80%", // Adjust width based on screen size
+              textAlign: "center", // Center the text inside the input
             },
           ]}
-          placeholder="Rendimento do seu investimento, sobre o CDI, exemplo 100, 105%, 110%, etc..."
+          placeholder="EX: 100%"
           value={inputValue}
-          onChangeText={setInputValue}
+          onChangeText={(text) => {
+            const numericValue = text.replace(/[^0-9]/g, "");
+            setInputValue(numericValue);
+          }}
           keyboardType="numeric"
           placeholderTextColor={colorScheme === "dark" ? "#aaa" : "#555"}
         />
