@@ -7,12 +7,33 @@ import {
   useColorScheme,
   ActivityIndicator,
   ScrollView,
+  View,
 } from "react-native";
 import { Stack } from "expo-router";
 import { ThemedText } from "../../components/ThemedText";
 import { ThemedView } from "../../components/ThemedView";
 
 const { width } = Dimensions.get("window");
+
+const InputField = ({ placeholder, value, onChangeText }) => {
+  const colorScheme = useColorScheme();
+  return (
+    <TextInput
+      style={[
+        styles.input,
+        {
+          color: colorScheme === "dark" ? "#fff" : "#000",
+          width: width > 600 ? "30%" : "80%",
+        },
+      ]}
+      placeholder={placeholder}
+      value={value}
+      onChangeText={onChangeText}
+      keyboardType="numeric"
+      placeholderTextColor={colorScheme === "dark" ? "#aaa" : "#555"}
+    />
+  );
+};
 
 export default function ButtonsPage() {
   const [activeButton, setActiveButton] = useState<number | null>(null);
@@ -49,22 +70,35 @@ export default function ButtonsPage() {
             <ThemedText style={styles.centeredText}>
               Quanto voce ja tem?
             </ThemedText>
-            <TextInput
-              style={[
-                styles.input,
-                {
-                  color: colorScheme === "dark" ? "#fff" : "#000",
-                  width: width > 600 ? "30%" : "80%",
-                },
-              ]}
+            <InputField
               placeholder="EX: R$1000"
               value={inputValue}
               onChangeText={(text) => {
                 const numericValue = text.replace(/[^0-9]/g, "");
                 setInputValue(numericValue);
               }}
-              keyboardType="numeric"
-              placeholderTextColor={colorScheme === "dark" ? "#aaa" : "#555"}
+            />
+            <ThemedText style={styles.centeredText}>
+              Quanto voce pretende investir por mes?
+            </ThemedText>
+            <InputField
+              placeholder="EX: R$200"
+              value={inputValue}
+              onChangeText={(text) => {
+                const numericValue = text.replace(/[^0-9]/g, "");
+                setInputValue(numericValue);
+              }}
+            />
+            <ThemedText style={styles.centeredText}>
+              Quanto voce deseja ter?
+            </ThemedText>
+            <InputField
+              placeholder="EX: R$5000"
+              value={inputValue}
+              onChangeText={(text) => {
+                const numericValue = text.replace(/[^0-9]/g, "");
+                setInputValue(numericValue);
+              }}
             />
             <TouchableOpacity
               style={[styles.button, styles.returnButton]}
@@ -77,9 +111,6 @@ export default function ButtonsPage() {
       case 2:
         return (
           <ThemedView style={styles.contentContainer}>
-            <ThemedText style={styles.innerContent}>
-              Content for Button 2
-            </ThemedText>
             <TouchableOpacity
               style={[styles.button, styles.returnButton]}
               onPress={() => setActiveButton(null)}
@@ -91,9 +122,6 @@ export default function ButtonsPage() {
       case 3:
         return (
           <ThemedView style={styles.contentContainer}>
-            <ThemedText style={styles.innerContent}>
-              Content for Button 3
-            </ThemedText>
             <TouchableOpacity
               style={[styles.button, styles.returnButton]}
               onPress={() => setActiveButton(null)}
@@ -163,22 +191,13 @@ export default function ButtonsPage() {
           <ThemedText style={styles.centeredText}>
             Insira a porcentagem do CDI do seu investimento:
           </ThemedText>
-          <TextInput
-            style={[
-              styles.input,
-              {
-                color: colorScheme === "dark" ? "#fff" : "#000",
-                width: width > 600 ? "30%" : "80%",
-              },
-            ]}
+          <InputField
             placeholder="EX: 100%"
             value={inputValue}
             onChangeText={(text) => {
               const numericValue = text.replace(/[^0-9]/g, "");
               setInputValue(numericValue);
             }}
-            keyboardType="numeric"
-            placeholderTextColor={colorScheme === "dark" ? "#aaa" : "#555"}
           />
         </ThemedView>
         {renderContent()}
