@@ -109,16 +109,6 @@ export default function ButtonsPage() {
           </ThemedView>
         );
       case 2:
-        return (
-          <ThemedView style={styles.contentContainer}>
-            <TouchableOpacity
-              style={[styles.button, styles.returnButton]}
-              onPress={() => setActiveButton(null)}
-            >
-              <ThemedText style={styles.buttonText}>Voltar</ThemedText>
-            </TouchableOpacity>
-          </ThemedView>
-        );
       case 3:
         return (
           <ThemedView style={styles.contentContainer}>
@@ -234,7 +224,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     gap: 20,
     alignItems: "center",
-    marginTop: 20, // Added marginTop to create space between the input and buttons
+    marginTop: 20,
   },
   button: {
     width: "60%",
@@ -266,11 +256,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
-  innerContent: {
-    fontSize: 18,
-    textAlign: "center",
-    marginTop: 20,
-  },
   contentContainer: {
     alignItems: "center",
   },
@@ -290,7 +275,7 @@ const styles = StyleSheet.create({
   },
   centeredView: {
     alignItems: "center",
-    marginBottom: 20, // Added marginBottom to create space between the input and buttons
+    marginBottom: 20,
   },
   centeredText: {
     textAlign: "center",
