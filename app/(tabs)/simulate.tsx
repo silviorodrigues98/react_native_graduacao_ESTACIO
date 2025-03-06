@@ -46,17 +46,25 @@ export default function ButtonsPage() {
       case 1:
         return (
           <ThemedView style={styles.contentContainer}>
-            <ThemedText style={styles.innerContent}>
-              Content for Button 1
+            <ThemedText style={{ textAlign: "center", marginBottom: 10 }}>
+              Quanto voce ja tem?
             </ThemedText>
             <TextInput
               style={[
                 styles.input,
-                { color: colorScheme === "dark" ? "#fff" : "#000" },
+                {
+                  marginVertical: 20,
+                  color: colorScheme === "dark" ? "#fff" : "#000",
+                  width: width > 600 ? "30%" : "80%", // Adjust width based on screen size
+                  textAlign: "center", // Center the text inside the input
+                },
               ]}
-              placeholder="Enter number for Button 1"
+              placeholder="EX: R$1000"
               value={inputValue}
-              onChangeText={setInputValue}
+              onChangeText={(text) => {
+                const numericValue = text.replace(/[^0-9]/g, "");
+                setInputValue(numericValue);
+              }}
               keyboardType="numeric"
               placeholderTextColor={colorScheme === "dark" ? "#aaa" : "#555"}
             />
@@ -74,17 +82,6 @@ export default function ButtonsPage() {
             <ThemedText style={styles.innerContent}>
               Content for Button 2
             </ThemedText>
-            <TextInput
-              style={[
-                styles.input,
-                { color: colorScheme === "dark" ? "#fff" : "#000" },
-              ]}
-              placeholder="Enter number for Button 2"
-              value={inputValue}
-              onChangeText={setInputValue}
-              keyboardType="numeric"
-              placeholderTextColor={colorScheme === "dark" ? "#aaa" : "#555"}
-            />
             <TouchableOpacity
               style={[styles.button, styles.returnButton]}
               onPress={() => setActiveButton(null)}
@@ -99,17 +96,6 @@ export default function ButtonsPage() {
             <ThemedText style={styles.innerContent}>
               Content for Button 3
             </ThemedText>
-            <TextInput
-              style={[
-                styles.input,
-                { color: colorScheme === "dark" ? "#fff" : "#000" },
-              ]}
-              placeholder="Enter number for Button 3"
-              value={inputValue}
-              onChangeText={setInputValue}
-              keyboardType="numeric"
-              placeholderTextColor={colorScheme === "dark" ? "#aaa" : "#555"}
-            />
             <TouchableOpacity
               style={[styles.button, styles.returnButton]}
               onPress={() => setActiveButton(null)}
