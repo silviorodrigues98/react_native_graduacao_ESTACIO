@@ -6,7 +6,7 @@ import {
   Dimensions,
   useColorScheme,
   ActivityIndicator,
-  ScrollView, // Import ScrollView
+  ScrollView,
 } from "react-native";
 import { Stack } from "expo-router";
 import { ThemedText } from "../../components/ThemedText";
@@ -15,10 +15,10 @@ import { ThemedView } from "../../components/ThemedView";
 const { width } = Dimensions.get("window");
 
 export default function ButtonsPage() {
-  const [activeButton, setActiveButton] = useState(null);
-  const [inputValue, setInputValue] = useState("");
-  const [profitPercentage, setProfitPercentage] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [activeButton, setActiveButton] = useState<number | null>(null);
+  const [inputValue, setInputValue] = useState<string>("");
+  const [profitPercentage, setProfitPercentage] = useState<number | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const colorScheme = useColorScheme();
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function ButtonsPage() {
         );
         const data = await response.json();
         if (data && data.length > 0) {
-          setProfitPercentage(data[data.length - 1].valor); // Assuming the latest value is needed
+          setProfitPercentage(data[data.length - 1].valor);
         }
       } catch (error) {
         console.error("Error fetching profit percentage:", error);
@@ -46,17 +46,15 @@ export default function ButtonsPage() {
       case 1:
         return (
           <ThemedView style={styles.contentContainer}>
-            <ThemedText style={{ textAlign: "center", marginBottom: 10 }}>
+            <ThemedText style={styles.centeredText}>
               Quanto voce ja tem?
             </ThemedText>
             <TextInput
               style={[
                 styles.input,
                 {
-                  marginVertical: 20,
                   color: colorScheme === "dark" ? "#fff" : "#000",
-                  width: width > 600 ? "30%" : "80%", // Adjust width based on screen size
-                  textAlign: "center", // Center the text inside the input
+                  width: width > 600 ? "30%" : "80%",
                 },
               ]}
               placeholder="EX: R$1000"
@@ -161,18 +159,16 @@ export default function ButtonsPage() {
             </ThemedText>
           )
         )}
-        <ThemedView style={{ alignItems: "center" }}>
-          <ThemedText style={{ textAlign: "center", marginBottom: 10 }}>
+        <ThemedView style={styles.centeredView}>
+          <ThemedText style={styles.centeredText}>
             Insira a porcentagem do CDI do seu investimento:
           </ThemedText>
           <TextInput
             style={[
               styles.input,
               {
-                marginVertical: 20,
                 color: colorScheme === "dark" ? "#fff" : "#000",
-                width: width > 600 ? "30%" : "80%", // Adjust width based on screen size
-                textAlign: "center", // Center the text inside the input
+                width: width > 600 ? "30%" : "80%",
               },
             ]}
             placeholder="EX: 100%"
@@ -218,11 +214,12 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     gap: 20,
-    alignItems: "center", // Center buttons horizontally
+    alignItems: "center",
+    marginTop: 20, // Added marginTop to create space between the input and buttons
   },
   button: {
-    width: "60%", // Take up 60% of the container width
-    maxWidth: 280, // Maximum width for larger screens
+    width: "60%",
+    maxWidth: 280,
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
@@ -243,7 +240,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#50C878",
   },
   button3: {
-    backgroundColor: "#ADD8E6", // Lighter blue color
+    backgroundColor: "#ADD8E6",
   },
   buttonText: {
     color: "#FFFFFF",
@@ -261,7 +258,7 @@ const styles = StyleSheet.create({
   returnButton: {
     backgroundColor: "#333",
     marginTop: 20,
-    width: width > 600 ? "30%" : "60%", // Adjust width based on screen size
+    width: width > 600 ? "30%" : "60%",
   },
   input: {
     height: 40,
@@ -270,6 +267,14 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginTop: 20,
-    width: width > 600 ? "50%" : "80%", // Adjust width based on screen size
+    width: width > 600 ? "50%" : "80%",
+  },
+  centeredView: {
+    alignItems: "center",
+    marginBottom: 20, // Added marginBottom to create space between the input and buttons
+  },
+  centeredText: {
+    textAlign: "center",
+    marginBottom: 10,
   },
 });
