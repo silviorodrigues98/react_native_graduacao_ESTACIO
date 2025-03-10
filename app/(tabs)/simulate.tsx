@@ -39,10 +39,11 @@ const InputField = ({ placeholder, value, onChangeText, onFocus, onBlur }) => {
 
 export default function ButtonsPage() {
   const [activeButton, setActiveButton] = useState<number | null>(null);
-  const [inputValue1, setInputValue1] = useState<string>("");
-  const [inputValue2, setInputValue2] = useState<string>("");
-  const [inputValue3, setInputValue3] = useState<string>("");
-  const [inputValueCDI, setInputValueCDI] = useState<string>("");
+  const [initialAmount, setInitialAmount] = useState<string>("");
+  const [monthlyInvestment, setMonthlyInvestment] = useState<string>("");
+  const [targetAmount, setTargetAmount] = useState<string>("");
+  const [cdiPercentage, setCdiPercentage] = useState<string>("");
+  const [expectedReturn, setExpectedReturn] = useState<string>("");
   const [profitPercentage, setProfitPercentage] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
@@ -70,24 +71,24 @@ export default function ButtonsPage() {
 
   const handleCalculate = () => {
     if (
-      !inputValue1 ||
-      !inputValue2 ||
-      !inputValue3 ||
-      !inputValueCDI ||
-      isNaN(Number(inputValue1)) ||
-      isNaN(Number(inputValue2)) ||
-      isNaN(Number(inputValue3)) ||
-      isNaN(Number(inputValueCDI))
+      !initialAmount ||
+      !monthlyInvestment ||
+      !targetAmount ||
+      !cdiPercentage ||
+      isNaN(Number(initialAmount)) ||
+      isNaN(Number(monthlyInvestment)) ||
+      isNaN(Number(targetAmount)) ||
+      isNaN(Number(cdiPercentage))
     ) {
       alert("Por favor, preencha todos os campos com valores numéricos.");
       return;
     }
 
     // Convertendo inputs para números
-    const valorInicial = Number(inputValue1); // Quanto já tem
-    const aportesMensais = Number(inputValue2); // Quanto investirá por mês
-    const objetivoFinal = Number(inputValue3); // Quanto deseja ter
-    const percentualCDI = Number(inputValueCDI) / 100; // Percentual do CDI do investimento
+    const valorInicial = Number(initialAmount); // Quanto já tem
+    const aportesMensais = Number(monthlyInvestment); // Quanto investirá por mês
+    const objetivoFinal = Number(targetAmount); // Quanto deseja ter
+    const percentualCDI = Number(cdiPercentage) / 100; // Percentual do CDI do investimento
 
     // Utilizando o CDI atual da API
     const taxaCDIAnual = profitPercentage / 100; // Taxa CDI anual (em decimal)
@@ -161,55 +162,55 @@ export default function ButtonsPage() {
             <ThemedText
               style={[
                 styles.inputLabel,
-                focusedInput === "input1" && styles.focusedLabel,
+                focusedInput === "initialAmount" && styles.focusedLabel,
               ]}
             >
               Quanto voce ja tem?
             </ThemedText>
             <InputField
               placeholder="EX: R$1000"
-              value={inputValue1}
+              value={initialAmount}
               onChangeText={(text) => {
                 const numericValue = text.replace(/[^0-9]/g, "");
-                setInputValue1(numericValue);
+                setInitialAmount(numericValue);
               }}
-              onFocus={() => setFocusedInput("input1")}
+              onFocus={() => setFocusedInput("initialAmount")}
               onBlur={() => setFocusedInput(null)}
             />
             <ThemedText
               style={[
                 styles.inputLabel,
-                focusedInput === "input2" && styles.focusedLabel,
+                focusedInput === "monthlyInvestment" && styles.focusedLabel,
               ]}
             >
               Quanto voce pretende investir por mes?
             </ThemedText>
             <InputField
               placeholder="EX: R$200"
-              value={inputValue2}
+              value={monthlyInvestment}
               onChangeText={(text) => {
                 const numericValue = text.replace(/[^0-9]/g, "");
-                setInputValue2(numericValue);
+                setMonthlyInvestment(numericValue);
               }}
-              onFocus={() => setFocusedInput("input2")}
+              onFocus={() => setFocusedInput("monthlyInvestment")}
               onBlur={() => setFocusedInput(null)}
             />
             <ThemedText
               style={[
                 styles.inputLabel,
-                focusedInput === "input3" && styles.focusedLabel,
+                focusedInput === "targetAmount" && styles.focusedLabel,
               ]}
             >
               Quanto voce deseja ter?
             </ThemedText>
             <InputField
               placeholder="EX: R$5000"
-              value={inputValue3}
+              value={targetAmount}
               onChangeText={(text) => {
                 const numericValue = text.replace(/[^0-9]/g, "");
-                setInputValue3(numericValue);
+                setTargetAmount(numericValue);
               }}
-              onFocus={() => setFocusedInput("input3")}
+              onFocus={() => setFocusedInput("targetAmount")}
               onBlur={() => setFocusedInput(null)}
             />
             <TouchableOpacity
@@ -227,6 +228,40 @@ export default function ButtonsPage() {
           </ThemedView>
         );
       case 2:
+        return (
+          <ThemedView style={styles.contentContainer}>
+            <ThemedText
+              style={[
+                styles.inputLabel,
+                focusedInput === "expectedReturn" && styles.focusedLabel,
+              ]}
+            >
+              Qual o rendimento esperado?
+            </ThemedText>
+            <InputField
+              placeholder="EX: R$10"
+              value={expectedReturn}
+              onChangeText={(text) => {
+                const numericValue = text.replace(/[^0-9]/g, "");
+                setExpectedReturn(numericValue);
+              }}
+              onFocus={() => setFocusedInput("expectedReturn")}
+              onBlur={() => setFocusedInput(null)}
+            />
+            <TouchableOpacity
+              style={[styles.button, styles.calculateButton]}
+              onPress={handleCalculate}
+            >
+              <ThemedText style={styles.buttonText}>Calcular</ThemedText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, styles.returnButton]}
+              onPress={() => setActiveButton(null)}
+            >
+              <ThemedText style={styles.buttonText}>Voltar</ThemedText>
+            </TouchableOpacity>
+          </ThemedView>
+        );
       case 3:
         return (
           <ThemedView style={styles.contentContainer}>
@@ -299,19 +334,19 @@ export default function ButtonsPage() {
           <ThemedText
             style={[
               styles.inputLabel,
-              focusedInput === "inputCDI" && styles.focusedLabel,
+              focusedInput === "cdiPercentage" && styles.focusedLabel,
             ]}
           >
             Insira a porcentagem do CDI do seu investimento:
           </ThemedText>
           <InputField
             placeholder="EX: 100%"
-            value={inputValueCDI}
+            value={cdiPercentage}
             onChangeText={(text) => {
               const numericValue = text.replace(/[^0-9]/g, "");
-              setInputValueCDI(numericValue);
+              setCdiPercentage(numericValue);
             }}
-            onFocus={() => setFocusedInput("inputCDI")}
+            onFocus={() => setFocusedInput("cdiPercentage")}
             onBlur={() => setFocusedInput(null)}
           />
         </ThemedView>
