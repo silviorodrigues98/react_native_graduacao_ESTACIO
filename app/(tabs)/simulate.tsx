@@ -67,6 +67,7 @@ export default function ButtonsPage() {
 
     fetchProfitPercentage();
   }, []);
+
   const handleCalculate = () => {
     if (
       !inputValue1 ||
@@ -90,6 +91,7 @@ export default function ButtonsPage() {
       inputValueCDI,
     });
   };
+
   const renderContent = () => {
     switch (activeButton) {
       case 1:
@@ -337,8 +339,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
-    marginTop: 10, // Adjusted margin
-    marginBottom: 20, // Added margin to separate inputs
+    marginTop: 10,
+    marginBottom: 20,
     width: width > 600 ? "50%" : "80%",
   },
   centeredView: {
@@ -347,9 +349,9 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     textAlign: "center",
-    marginBottom: 5, // Adjusted margin
+    marginBottom: 5,
   },
   focusedLabel: {
-    color: "#4A90E2", // Change this color as needed
+    color: "#4A90E2",
   },
 });
