@@ -12,10 +12,19 @@ import {
 import { Stack } from "expo-router";
 import { ThemedText } from "../../components/ThemedText";
 import { ThemedView } from "../../components/ThemedView";
+import { Picker } from "@react-native-picker/picker";
 
 const { width } = Dimensions.get("window");
 
-const InputField = ({ placeholder, value, onChangeText, onFocus, onBlur }) => {
+interface InputFieldProps {
+  placeholder: string;
+  value: string;
+  onChangeText: (text: string) => void;
+  onFocus: () => void;
+  onBlur: () => void;
+}
+
+const InputField: React.FC<InputFieldProps> = ({ placeholder, value, onChangeText, onFocus, onBlur }) => {
   const colorScheme = useColorScheme();
   return (
     <TextInput
@@ -46,6 +55,7 @@ export default function ButtonsPage() {
   const [expectedReturn, setExpectedReturn] = useState<string>("");
   const [profitPercentage, setProfitPercentage] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedOption, setSelectedOption] = useState<string>("option1");
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
   const colorScheme = useColorScheme();
 
@@ -91,7 +101,7 @@ export default function ButtonsPage() {
     const percentualCDI = Number(cdiPercentage) / 100; // Percentual do CDI do investimento
 
     // Utilizando o CDI atual da API
-    const taxaCDIAnual = profitPercentage / 100; // Taxa CDI anual (em decimal)
+    const taxaCDIAnual = (profitPercentage ?? 0) / 100; // Taxa CDI anual (em decimal)
 
     // Taxa de rendimento mensal do investimento
     const taxaMensal = (Math.pow(1 + taxaCDIAnual, 1 / 12) - 1) * percentualCDI;
@@ -232,8 +242,8 @@ export default function ButtonsPage() {
           <ThemedView style={styles.contentContainer}>
             <ThemedText
               style={[
-                styles.inputLabel,
-                focusedInput === "expectedReturn" && styles.focusedLabel,
+          styles.inputLabel,
+          focusedInput === "expectedReturn" && styles.focusedLabel,
               ]}
             >
               Qual o rendimento esperado?
@@ -242,12 +252,24 @@ export default function ButtonsPage() {
               placeholder="EX: R$10"
               value={expectedReturn}
               onChangeText={(text) => {
-                const numericValue = text.replace(/[^0-9]/g, "");
-                setExpectedReturn(numericValue);
+          const numericValue = text.replace(/[^0-9]/g, "");
+          setExpectedReturn(numericValue);
               }}
               onFocus={() => setFocusedInput("expectedReturn")}
               onBlur={() => setFocusedInput(null)}
             />
+            <ThemedText style={styles.inputLabel}>Selecione uma opção:</ThemedText>
+            <View style={styles.dropdownContainer}>
+              <Picker
+          selectedValue={selectedOption}
+          onValueChange={(itemValue) => setSelectedOption(itemValue)}
+          style={styles.picker}
+              >
+          <Picker.Item label="Opção 1" value="option1" />
+          <Picker.Item label="Opção 2" value="option2" />
+          <Picker.Item label="Opção 3" value="option3" />
+              </Picker>
+            </View>
             <TouchableOpacity
               style={[styles.button, styles.calculateButton]}
               onPress={handleCalculate}
@@ -449,5 +471,13 @@ const styles = StyleSheet.create({
   },
   focusedLabel: {
     color: "#4A90E2",
+  },
+  dropdownContainer: {
+    width: width > 600 ? "30%" : "80%",
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 5,
+    marginTop: 10,
+    marginBottom: 20,
   },
 });
