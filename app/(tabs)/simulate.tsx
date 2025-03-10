@@ -246,10 +246,10 @@ export default function ButtonsPage() {
           focusedInput === "expectedReturn" && styles.focusedLabel,
               ]}
             >
-              Qual o rendimento esperado?
+              Qual o rendimento esperado por mes?
             </ThemedText>
             <InputField
-              placeholder="EX: R$10"
+              placeholder="EX: R$1000"
               value={expectedReturn}
               onChangeText={(text) => {
           const numericValue = text.replace(/[^0-9]/g, "");
@@ -258,18 +258,6 @@ export default function ButtonsPage() {
               onFocus={() => setFocusedInput("expectedReturn")}
               onBlur={() => setFocusedInput(null)}
             />
-            <ThemedText style={styles.inputLabel}>Selecione uma opção:</ThemedText>
-            <View style={styles.dropdownContainer}>
-              <Picker
-          selectedValue={selectedOption}
-          onValueChange={(itemValue) => setSelectedOption(itemValue)}
-          style={styles.picker}
-              >
-          <Picker.Item label="Opção 1" value="option1" />
-          <Picker.Item label="Opção 2" value="option2" />
-          <Picker.Item label="Opção 3" value="option3" />
-              </Picker>
-            </View>
             <TouchableOpacity
               style={[styles.button, styles.calculateButton]}
               onPress={handleCalculate}
