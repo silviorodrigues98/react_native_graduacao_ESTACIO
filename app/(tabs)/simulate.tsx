@@ -67,7 +67,7 @@ export default function ButtonsPage() {
       case 1:
         return (
           <ThemedView style={styles.contentContainer}>
-            <ThemedText style={styles.centeredText}>
+            <ThemedText style={styles.inputLabel}>
               Quanto voce ja tem?
             </ThemedText>
             <InputField
@@ -78,7 +78,7 @@ export default function ButtonsPage() {
                 setInputValue(numericValue);
               }}
             />
-            <ThemedText style={styles.centeredText}>
+            <ThemedText style={styles.inputLabel}>
               Quanto voce pretende investir por mes?
             </ThemedText>
             <InputField
@@ -89,7 +89,7 @@ export default function ButtonsPage() {
                 setInputValue(numericValue);
               }}
             />
-            <ThemedText style={styles.centeredText}>
+            <ThemedText style={styles.inputLabel}>
               Quanto voce deseja ter?
             </ThemedText>
             <InputField
@@ -178,7 +178,7 @@ export default function ButtonsPage() {
           )
         )}
         <ThemedView style={styles.centeredView}>
-          <ThemedText style={styles.centeredText}>
+          <ThemedText style={styles.inputLabel}>
             Insira a porcentagem do CDI do seu investimento:
           </ThemedText>
           <InputField
@@ -270,15 +270,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
-    marginTop: 20,
+    marginTop: 10, // Adjusted margin
     width: width > 600 ? "50%" : "80%",
   },
   centeredView: {
     alignItems: "center",
     marginBottom: 20,
   },
-  centeredText: {
+  inputLabel: {
     textAlign: "center",
-    marginBottom: 10,
+    marginBottom: 5, // Adjusted margin
   },
 });
