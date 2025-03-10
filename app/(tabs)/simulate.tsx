@@ -83,15 +83,76 @@ export default function ButtonsPage() {
       return;
     }
 
-    // Implement your calculation logic here
-    console.log("Calculating with values:", {
-      inputValue1,
-      inputValue2,
-      inputValue3,
-      inputValueCDI,
-    });
-  };
+    // Convertendo inputs para números
+    const valorInicial = Number(inputValue1); // Quanto já tem
+    const aportesMensais = Number(inputValue2); // Quanto investirá por mês
+    const objetivoFinal = Number(inputValue3); // Quanto deseja ter
+    const percentualCDI = Number(inputValueCDI) / 100; // Percentual do CDI do investimento
 
+    // Utilizando o CDI atual da API
+    const taxaCDIAnual = profitPercentage / 100; // Taxa CDI anual (em decimal)
+
+    // Taxa de rendimento mensal do investimento
+    const taxaMensal = (Math.pow(1 + taxaCDIAnual, 1 / 12) - 1) * percentualCDI;
+
+    // Verifica se o objetivo já foi atingido com o valor inicial
+    if (valorInicial >= objetivoFinal) {
+      alert("Você já atingiu seu objetivo financeiro!");
+      return;
+    }
+
+    // Verifica se o aporte mensal é zero
+    if (aportesMensais === 0) {
+      // Cálculo apenas com juros compostos (sem aportes)
+      const tempoNecessario =
+        Math.log(objetivoFinal / valorInicial) / Math.log(1 + taxaMensal);
+      const meses = Math.ceil(tempoNecessario);
+      const anos = Math.floor(meses / 12);
+      const mesesRestantes = meses % 12;
+
+      alert(
+        `Com seu valor inicial de R$${valorInicial.toFixed(
+          2
+        )} e rendimento mensal de ${(taxaMensal * 100).toFixed(2)}%, ` +
+          `você atingirá seu objetivo de R$${objetivoFinal.toFixed(
+            2
+          )} em ${anos} anos e ${mesesRestantes} meses.`
+      );
+      return;
+    }
+
+    // Cálculo com valor inicial e aportes mensais
+    let saldo = valorInicial;
+    let meses = 0;
+
+    while (saldo < objetivoFinal && meses < 1200) {
+      // Limite de 100 anos para evitar loop infinito
+      saldo = saldo * (1 + taxaMensal) + aportesMensais;
+      meses++;
+    }
+
+    if (meses >= 1200) {
+      alert(
+        "Com os valores informados, seu objetivo levará mais de 100 anos para ser atingido."
+      );
+    } else {
+      const anos = Math.floor(meses / 12);
+      const mesesRestantes = meses % 12;
+
+      // Cálculo do valor total investido
+      const totalInvestido = valorInicial + aportesMensais * meses;
+      // Cálculo dos juros obtidos
+      const jurosObtidos = saldo - totalInvestido;
+
+      alert(
+        `Tempo necessário: ${anos} anos e ${mesesRestantes} meses\n\n` +
+          `Valor inicial: R$${valorInicial.toFixed(2)}\n` +
+          `Total de aportes: R$${(aportesMensais * meses).toFixed(2)}\n` +
+          `Juros obtidos: R$${jurosObtidos.toFixed(2)}\n` +
+          `Montante final: R$${saldo.toFixed(2)}`
+      );
+    }
+  };
   const renderContent = () => {
     switch (activeButton) {
       case 1:
