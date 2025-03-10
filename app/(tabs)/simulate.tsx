@@ -13,7 +13,7 @@ import { Stack } from "expo-router";
 import { ThemedText } from "../../components/ThemedText";
 import { ThemedView } from "../../components/ThemedView";
 
-const { width } = Dimensions.get("window");;
+const { width } = Dimensions.get("window");
 
 const InputField = ({ placeholder, value, onChangeText, onFocus, onBlur }) => {
   const colorScheme = useColorScheme();
@@ -67,8 +67,21 @@ export default function ButtonsPage() {
 
     fetchProfitPercentage();
   }, []);
-
   const handleCalculate = () => {
+    if (
+      !inputValue1 ||
+      !inputValue2 ||
+      !inputValue3 ||
+      !inputValueCDI ||
+      isNaN(Number(inputValue1)) ||
+      isNaN(Number(inputValue2)) ||
+      isNaN(Number(inputValue3)) ||
+      isNaN(Number(inputValueCDI))
+    ) {
+      alert("Por favor, preencha todos os campos com valores numéricos.");
+      return;
+    }
+
     // Implement your calculation logic here
     console.log("Calculating with values:", {
       inputValue1,
@@ -77,7 +90,6 @@ export default function ButtonsPage() {
       inputValueCDI,
     });
   };
-
   const renderContent = () => {
     switch (activeButton) {
       case 1:
