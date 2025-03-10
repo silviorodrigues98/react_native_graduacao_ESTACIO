@@ -39,7 +39,10 @@ const InputField = ({ placeholder, value, onChangeText, onFocus, onBlur }) => {
 
 export default function ButtonsPage() {
   const [activeButton, setActiveButton] = useState<number | null>(null);
-  const [inputValue, setInputValue] = useState<string>("");
+  const [inputValue1, setInputValue1] = useState<string>("");
+  const [inputValue2, setInputValue2] = useState<string>("");
+  const [inputValue3, setInputValue3] = useState<string>("");
+  const [inputValueCDI, setInputValueCDI] = useState<string>("");
   const [profitPercentage, setProfitPercentage] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
@@ -80,10 +83,10 @@ export default function ButtonsPage() {
             </ThemedText>
             <InputField
               placeholder="EX: R$1000"
-              value={inputValue}
+              value={inputValue1}
               onChangeText={(text) => {
                 const numericValue = text.replace(/[^0-9]/g, "");
-                setInputValue(numericValue);
+                setInputValue1(numericValue);
               }}
               onFocus={() => setFocusedInput("input1")}
               onBlur={() => setFocusedInput(null)}
@@ -98,10 +101,10 @@ export default function ButtonsPage() {
             </ThemedText>
             <InputField
               placeholder="EX: R$200"
-              value={inputValue}
+              value={inputValue2}
               onChangeText={(text) => {
                 const numericValue = text.replace(/[^0-9]/g, "");
-                setInputValue(numericValue);
+                setInputValue2(numericValue);
               }}
               onFocus={() => setFocusedInput("input2")}
               onBlur={() => setFocusedInput(null)}
@@ -116,10 +119,10 @@ export default function ButtonsPage() {
             </ThemedText>
             <InputField
               placeholder="EX: R$5000"
-              value={inputValue}
+              value={inputValue3}
               onChangeText={(text) => {
                 const numericValue = text.replace(/[^0-9]/g, "");
-                setInputValue(numericValue);
+                setInputValue3(numericValue);
               }}
               onFocus={() => setFocusedInput("input3")}
               onBlur={() => setFocusedInput(null)}
@@ -212,10 +215,10 @@ export default function ButtonsPage() {
           </ThemedText>
           <InputField
             placeholder="EX: 100%"
-            value={inputValue}
+            value={inputValueCDI}
             onChangeText={(text) => {
               const numericValue = text.replace(/[^0-9]/g, "");
-              setInputValue(numericValue);
+              setInputValueCDI(numericValue);
             }}
             onFocus={() => setFocusedInput("inputCDI")}
             onBlur={() => setFocusedInput(null)}
