@@ -13,7 +13,7 @@ import { Stack } from "expo-router";
 import { ThemedText } from "../../components/ThemedText";
 import { ThemedView } from "../../components/ThemedView";
 
-const { width } = Dimensions.get("window");
+const { width } = Dimensions.get("window");;
 
 const InputField = ({ placeholder, value, onChangeText, onFocus, onBlur }) => {
   const colorScheme = useColorScheme();
@@ -67,6 +67,16 @@ export default function ButtonsPage() {
 
     fetchProfitPercentage();
   }, []);
+
+  const handleCalculate = () => {
+    // Implement your calculation logic here
+    console.log("Calculating with values:", {
+      inputValue1,
+      inputValue2,
+      inputValue3,
+      inputValueCDI,
+    });
+  };
 
   const renderContent = () => {
     switch (activeButton) {
@@ -127,6 +137,12 @@ export default function ButtonsPage() {
               onFocus={() => setFocusedInput("input3")}
               onBlur={() => setFocusedInput(null)}
             />
+            <TouchableOpacity
+              style={[styles.button, styles.calculateButton]}
+              onPress={handleCalculate}
+            >
+              <ThemedText style={styles.buttonText}>Calcular</ThemedText>
+            </TouchableOpacity>
             <TouchableOpacity
               style={[styles.button, styles.returnButton]}
               onPress={() => setActiveButton(null)}
@@ -295,6 +311,11 @@ const styles = StyleSheet.create({
   },
   returnButton: {
     backgroundColor: "#333",
+    marginTop: 20,
+    width: width > 600 ? "30%" : "60%",
+  },
+  calculateButton: {
+    backgroundColor: "#FFA500",
     marginTop: 20,
     width: width > 600 ? "30%" : "60%",
   },
