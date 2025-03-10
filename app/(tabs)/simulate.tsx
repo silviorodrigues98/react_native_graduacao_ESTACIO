@@ -302,6 +302,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginTop: 10, // Adjusted margin
+    marginBottom: 20, // Added margin to separate inputs
     width: width > 600 ? "50%" : "80%",
   },
   centeredView: {
