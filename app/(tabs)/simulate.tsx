@@ -15,7 +15,7 @@ import { ThemedView } from "../../components/ThemedView";
 
 const { width } = Dimensions.get("window");
 
-const InputField = ({ placeholder, value, onChangeText }) => {
+const InputField = ({ placeholder, value, onChangeText, onFocus, onBlur }) => {
   const colorScheme = useColorScheme();
   return (
     <TextInput
@@ -31,6 +31,8 @@ const InputField = ({ placeholder, value, onChangeText }) => {
       onChangeText={onChangeText}
       keyboardType="numeric"
       placeholderTextColor={colorScheme === "dark" ? "#aaa" : "#555"}
+      onFocus={onFocus}
+      onBlur={onBlur}
     />
   );
 };
@@ -40,6 +42,7 @@ export default function ButtonsPage() {
   const [inputValue, setInputValue] = useState<string>("");
   const [profitPercentage, setProfitPercentage] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [focusedInput, setFocusedInput] = useState<string | null>(null);
   const colorScheme = useColorScheme();
 
   useEffect(() => {
@@ -67,7 +70,12 @@ export default function ButtonsPage() {
       case 1:
         return (
           <ThemedView style={styles.contentContainer}>
-            <ThemedText style={styles.inputLabel}>
+            <ThemedText
+              style={[
+                styles.inputLabel,
+                focusedInput === "input1" && styles.focusedLabel,
+              ]}
+            >
               Quanto voce ja tem?
             </ThemedText>
             <InputField
@@ -77,8 +85,15 @@ export default function ButtonsPage() {
                 const numericValue = text.replace(/[^0-9]/g, "");
                 setInputValue(numericValue);
               }}
+              onFocus={() => setFocusedInput("input1")}
+              onBlur={() => setFocusedInput(null)}
             />
-            <ThemedText style={styles.inputLabel}>
+            <ThemedText
+              style={[
+                styles.inputLabel,
+                focusedInput === "input2" && styles.focusedLabel,
+              ]}
+            >
               Quanto voce pretende investir por mes?
             </ThemedText>
             <InputField
@@ -88,8 +103,15 @@ export default function ButtonsPage() {
                 const numericValue = text.replace(/[^0-9]/g, "");
                 setInputValue(numericValue);
               }}
+              onFocus={() => setFocusedInput("input2")}
+              onBlur={() => setFocusedInput(null)}
             />
-            <ThemedText style={styles.inputLabel}>
+            <ThemedText
+              style={[
+                styles.inputLabel,
+                focusedInput === "input3" && styles.focusedLabel,
+              ]}
+            >
               Quanto voce deseja ter?
             </ThemedText>
             <InputField
@@ -99,6 +121,8 @@ export default function ButtonsPage() {
                 const numericValue = text.replace(/[^0-9]/g, "");
                 setInputValue(numericValue);
               }}
+              onFocus={() => setFocusedInput("input3")}
+              onBlur={() => setFocusedInput(null)}
             />
             <TouchableOpacity
               style={[styles.button, styles.returnButton]}
@@ -178,7 +202,12 @@ export default function ButtonsPage() {
           )
         )}
         <ThemedView style={styles.centeredView}>
-          <ThemedText style={styles.inputLabel}>
+          <ThemedText
+            style={[
+              styles.inputLabel,
+              focusedInput === "inputCDI" && styles.focusedLabel,
+            ]}
+          >
             Insira a porcentagem do CDI do seu investimento:
           </ThemedText>
           <InputField
@@ -188,6 +217,8 @@ export default function ButtonsPage() {
               const numericValue = text.replace(/[^0-9]/g, "");
               setInputValue(numericValue);
             }}
+            onFocus={() => setFocusedInput("inputCDI")}
+            onBlur={() => setFocusedInput(null)}
           />
         </ThemedView>
         {renderContent()}
@@ -280,5 +311,8 @@ const styles = StyleSheet.create({
   inputLabel: {
     textAlign: "center",
     marginBottom: 5, // Adjusted margin
+  },
+  focusedLabel: {
+    color: "#4A90E2", // Change this color as needed
   },
 });
