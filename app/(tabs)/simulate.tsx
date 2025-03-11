@@ -24,7 +24,13 @@ interface InputFieldProps {
   onBlur: () => void;
 }
 
-const InputField: React.FC<InputFieldProps> = ({ placeholder, value, onChangeText, onFocus, onBlur }) => {
+const InputField: React.FC<InputFieldProps> = ({
+  placeholder,
+  value,
+  onChangeText,
+  onFocus,
+  onBlur,
+}) => {
   const colorScheme = useColorScheme();
   return (
     <TextInput
@@ -80,90 +86,143 @@ export default function ButtonsPage() {
   }, []);
 
   const handleCalculate = () => {
-    if (
-      !initialAmount ||
-      !monthlyInvestment ||
-      !targetAmount ||
-      !cdiPercentage ||
-      isNaN(Number(initialAmount)) ||
-      isNaN(Number(monthlyInvestment)) ||
-      isNaN(Number(targetAmount)) ||
-      isNaN(Number(cdiPercentage))
-    ) {
-      alert("Por favor, preencha todos os campos com valores numéricos.");
+    // Common validation for all calculators
+    if (!cdiPercentage || isNaN(Number(cdiPercentage))) {
+      alert("Por favor, preencha a porcentagem do CDI com um valor numérico.");
       return;
     }
 
-    // Convertendo inputs para números
-    const valorInicial = Number(initialAmount); // Quanto já tem
-    const aportesMensais = Number(monthlyInvestment); // Quanto investirá por mês
-    const objetivoFinal = Number(targetAmount); // Quanto deseja ter
-    const percentualCDI = Number(cdiPercentage) / 100; // Percentual do CDI do investimento
-
     // Utilizando o CDI atual da API
     const taxaCDIAnual = (profitPercentage ?? 0) / 100; // Taxa CDI anual (em decimal)
+    const percentualCDI = Number(cdiPercentage) / 100; // Percentual do CDI do investimento
 
     // Taxa de rendimento mensal do investimento
     const taxaMensal = (Math.pow(1 + taxaCDIAnual, 1 / 12) - 1) * percentualCDI;
 
-    // Verifica se o objetivo já foi atingido com o valor inicial
-    if (valorInicial >= objetivoFinal) {
-      alert("Você já atingiu seu objetivo financeiro!");
-      return;
-    }
+    if (activeButton === 1) {
+      // Calculo para juntar um montante para um objetivo
+      if (
+        !initialAmount ||
+        !monthlyInvestment ||
+        !targetAmount ||
+        isNaN(Number(initialAmount)) ||
+        isNaN(Number(monthlyInvestment)) ||
+        isNaN(Number(targetAmount))
+      ) {
+        alert("Por favor, preencha todos os campos com valores numéricos.");
+        return;
+      }
 
-    // Verifica se o aporte mensal é zero
-    if (aportesMensais === 0) {
-      // Cálculo apenas com juros compostos (sem aportes)
-      const tempoNecessario =
-        Math.log(objetivoFinal / valorInicial) / Math.log(1 + taxaMensal);
-      const meses = Math.ceil(tempoNecessario);
-      const anos = Math.floor(meses / 12);
-      const mesesRestantes = meses % 12;
+      // Convertendo inputs para números
+      const valorInicial = Number(initialAmount); // Quanto já tem
+      const aportesMensais = Number(monthlyInvestment); // Quanto investirá por mês
+      const objetivoFinal = Number(targetAmount); // Quanto deseja ter
 
-      alert(
-        `Com seu valor inicial de R$${valorInicial.toFixed(
-          2
-        )} e rendimento mensal de ${(taxaMensal * 100).toFixed(2)}%, ` +
-          `você atingirá seu objetivo de R$${objetivoFinal.toFixed(
+      // Verifica se o objetivo já foi atingido com o valor inicial
+      if (valorInicial >= objetivoFinal) {
+        alert("Você já atingiu seu objetivo financeiro!");
+        return;
+      }
+
+      // Verifica se o aporte mensal é zero
+      if (aportesMensais === 0) {
+        // Cálculo apenas com juros compostos (sem aportes)
+        const tempoNecessario =
+          Math.log(objetivoFinal / valorInicial) / Math.log(1 + taxaMensal);
+        const meses = Math.ceil(tempoNecessario);
+        const anos = Math.floor(meses / 12);
+        const mesesRestantes = meses % 12;
+
+        alert(
+          `Com seu valor inicial de R$${valorInicial.toFixed(
             2
-          )} em ${anos} anos e ${mesesRestantes} meses.`
+          )} e rendimento mensal de ${(taxaMensal * 100).toFixed(2)}%, ` +
+            `você atingirá seu objetivo de R$${objetivoFinal.toFixed(
+              2
+            )} em ${anos} anos e ${mesesRestantes} meses.`
+        );
+        return;
+      }
+
+      // Cálculo com valor inicial e aportes mensais
+      let saldo = valorInicial;
+      let meses = 0;
+
+      while (saldo < objetivoFinal && meses < 1200) {
+        // Limite de 100 anos para evitar loop infinito
+        saldo = saldo * (1 + taxaMensal) + aportesMensais;
+        meses++;
+      }
+
+      if (meses >= 1200) {
+        alert(
+          "Com os valores informados, seu objetivo levará mais de 100 anos para ser atingido."
+        );
+      } else {
+        const anos = Math.floor(meses / 12);
+        const mesesRestantes = meses % 12;
+
+        // Cálculo do valor total investido
+        const totalInvestido = valorInicial + aportesMensais * meses;
+        // Cálculo dos juros obtidos
+        const jurosObtidos = saldo - totalInvestido;
+
+        alert(
+          `Tempo necessário: ${anos} anos e ${mesesRestantes} meses\n\n` +
+            `Valor inicial: R$${valorInicial.toFixed(2)}\n` +
+            `Total de aportes: R$${(aportesMensais * meses).toFixed(2)}\n` +
+            `Juros obtidos: R$${jurosObtidos.toFixed(2)}\n` +
+            `Montante final: R$${saldo.toFixed(2)}`
+        );
+      }
+    } else if (activeButton === 2) {
+      // Calculo para gerar renda mensal para aposentadoria
+      if (!expectedReturn || isNaN(Number(expectedReturn))) {
+        alert(
+          "Por favor, preencha o rendimento esperado por mês com um valor numérico."
+        );
+        return;
+      }
+
+      // Convertendo input para número
+      const rendaMensal = Number(expectedReturn); // Quanto deseja receber por mês
+
+      // Cálculo do montante necessário para gerar a renda mensal desejada
+      // Fórmula: Principal = Renda Mensal / Taxa Mensal
+      const montanteNecessario = rendaMensal / taxaMensal;
+
+      // Formatar valores para exibição
+      const rendaMensalFormatada = rendaMensal.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
+      const montanteNecessarioFormatado = montanteNecessario.toLocaleString(
+        "pt-BR",
+        { style: "currency", currency: "BRL" }
       );
-      return;
-    }
+      const taxaMensalPercentual = (taxaMensal * 100).toFixed(2);
+      const taxaAnualPercentual = (
+        (Math.pow(1 + taxaMensal, 12) - 1) *
+        100
+      ).toFixed(2);
 
-    // Cálculo com valor inicial e aportes mensais
-    let saldo = valorInicial;
-    let meses = 0;
-
-    while (saldo < objetivoFinal && meses < 1200) {
-      // Limite de 100 anos para evitar loop infinito
-      saldo = saldo * (1 + taxaMensal) + aportesMensais;
-      meses++;
-    }
-
-    if (meses >= 1200) {
       alert(
-        "Com os valores informados, seu objetivo levará mais de 100 anos para ser atingido."
+        `Para receber uma renda mensal de ${rendaMensalFormatada}, ` +
+          `você precisará ter investido ${montanteNecessarioFormatado}.\n\n` +
+          `Cálculo baseado em:\n` +
+          `- Taxa CDI atual: ${profitPercentage}%\n` +
+          `- Percentual do CDI: ${cdiPercentage}%\n` +
+          `- Rendimento mensal: ${taxaMensalPercentual}%\n` +
+          `- Rendimento anual: ${taxaAnualPercentual}%\n\n` +
+          `Esta simulação considera que apenas os rendimentos serão sacados mensalmente, ` +
+          `preservando o valor principal investido.`
       );
-    } else {
-      const anos = Math.floor(meses / 12);
-      const mesesRestantes = meses % 12;
-
-      // Cálculo do valor total investido
-      const totalInvestido = valorInicial + aportesMensais * meses;
-      // Cálculo dos juros obtidos
-      const jurosObtidos = saldo - totalInvestido;
-
-      alert(
-        `Tempo necessário: ${anos} anos e ${mesesRestantes} meses\n\n` +
-          `Valor inicial: R$${valorInicial.toFixed(2)}\n` +
-          `Total de aportes: R$${(aportesMensais * meses).toFixed(2)}\n` +
-          `Juros obtidos: R$${jurosObtidos.toFixed(2)}\n` +
-          `Montante final: R$${saldo.toFixed(2)}`
-      );
+    } else if (activeButton === 3) {
+      // Implementação para o terceiro botão (cálculo de rendimento de investimentos existentes)
+      alert("Funcionalidade ainda não implementada.");
     }
   };
+
   const renderContent = () => {
     switch (activeButton) {
       case 1:
@@ -242,22 +301,27 @@ export default function ButtonsPage() {
           <ThemedView style={styles.contentContainer}>
             <ThemedText
               style={[
-          styles.inputLabel,
-          focusedInput === "expectedReturn" && styles.focusedLabel,
+                styles.inputLabel,
+                focusedInput === "expectedReturn" && styles.focusedLabel,
               ]}
             >
-              Qual o rendimento esperado por mes?
+              Qual o valor mensal que você deseja receber?
             </ThemedText>
             <InputField
-              placeholder="EX: R$1000"
+              placeholder="EX: R$3000"
               value={expectedReturn}
               onChangeText={(text) => {
-          const numericValue = text.replace(/[^0-9]/g, "");
-          setExpectedReturn(numericValue);
+                const numericValue = text.replace(/[^0-9]/g, "");
+                setExpectedReturn(numericValue);
               }}
               onFocus={() => setFocusedInput("expectedReturn")}
               onBlur={() => setFocusedInput(null)}
             />
+            <ThemedText style={styles.infoText}>
+              Calcularemos quanto você precisa ter investido para receber esse
+              valor mensalmente, considerando apenas os rendimentos e
+              preservando o capital.
+            </ThemedText>
             <TouchableOpacity
               style={[styles.button, styles.calculateButton]}
               onPress={handleCalculate}
@@ -467,5 +531,13 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 10,
     marginBottom: 20,
+  },
+  infoText: {
+    fontSize: 14,
+    textAlign: "center",
+    marginTop: 5,
+    marginBottom: 15,
+    paddingHorizontal: 20,
+    opacity: 0.8,
   },
 });
