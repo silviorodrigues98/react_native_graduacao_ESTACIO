@@ -218,8 +218,62 @@ export default function ButtonsPage() {
           `preservando o valor principal investido.`
       );
     } else if (activeButton === 3) {
-      // Implementação para o terceiro botão (cálculo de rendimento de investimentos existentes)
-      alert("Funcionalidade ainda não implementada.");
+      // Cálculo de rendimento de investimentos existentes
+      if (!initialAmount || isNaN(Number(initialAmount))) {
+        alert("Por favor, informe o valor investido.");
+        return;
+      }
+
+      // Convertendo input para número
+      const valorInvestido = Number(initialAmount);
+
+      // Utilizando o CDI atual da API
+      const taxaCDIAnual = (profitPercentage ?? 0) / 100; // Taxa CDI anual (em decimal)
+      const percentualCDI = Number(cdiPercentage) / 100; // Percentual do CDI do investimento
+
+      // Cálculo das taxas de rendimento
+      const taxaAnual = taxaCDIAnual * percentualCDI;
+      const taxaMensal = Math.pow(1 + taxaAnual, 1 / 12) - 1;
+      const taxaDiaria = Math.pow(1 + taxaAnual, 1 / 252) - 1; // 252 dias úteis no ano
+
+      // Cálculo dos rendimentos
+      const rendimentoDiario = valorInvestido * taxaDiaria;
+      const rendimentoMensal = valorInvestido * taxaMensal;
+      const rendimentoAnual = valorInvestido * taxaAnual;
+
+      // Formatação dos valores
+      const valorInvestidoFormatado = valorInvestido.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
+      const rendimentoDiarioFormatado = rendimentoDiario.toLocaleString(
+        "pt-BR",
+        { style: "currency", currency: "BRL" }
+      );
+      const rendimentoMensalFormatado = rendimentoMensal.toLocaleString(
+        "pt-BR",
+        { style: "currency", currency: "BRL" }
+      );
+      const rendimentoAnualFormatado = rendimentoAnual.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
+
+      // Taxas em percentual
+      const taxaDiariaPercentual = (taxaDiaria * 100).toFixed(5);
+      const taxaMensalPercentual = (taxaMensal * 100).toFixed(2);
+      const taxaAnualPercentual = (taxaAnual * 100).toFixed(2);
+
+      alert(
+        `Rendimentos do seu investimento de ${valorInvestidoFormatado}:\n\n` +
+          `Rendimento diário: ${rendimentoDiarioFormatado} (${taxaDiariaPercentual}%)\n` +
+          `Rendimento mensal: ${rendimentoMensalFormatado} (${taxaMensalPercentual}%)\n` +
+          `Rendimento anual: ${rendimentoAnualFormatado} (${taxaAnualPercentual}%)\n\n` +
+          `Cálculo baseado em:\n` +
+          `- Taxa CDI atual: ${profitPercentage}% ao ano\n` +
+          `- Percentual do CDI: ${cdiPercentage}%\n` +
+          `- Rendimento efetivo: ${taxaAnualPercentual}% ao ano`
+      );
     }
   };
 
@@ -339,6 +393,34 @@ export default function ButtonsPage() {
       case 3:
         return (
           <ThemedView style={styles.contentContainer}>
+            <ThemedText
+              style={[
+                styles.inputLabel,
+                focusedInput === "initialAmount" && styles.focusedLabel,
+              ]}
+            >
+              Quanto você já tem investido?
+            </ThemedText>
+            <InputField
+              placeholder="EX: R$10000"
+              value={initialAmount}
+              onChangeText={(text) => {
+                const numericValue = text.replace(/[^0-9]/g, "");
+                setInitialAmount(numericValue);
+              }}
+              onFocus={() => setFocusedInput("initialAmount")}
+              onBlur={() => setFocusedInput(null)}
+            />
+            <ThemedText style={styles.infoText}>
+              Calcularemos quanto seus investimentos rendem diariamente,
+              mensalmente e anualmente com base na taxa CDI atual.
+            </ThemedText>
+            <TouchableOpacity
+              style={[styles.button, styles.calculateButton]}
+              onPress={handleCalculate}
+            >
+              <ThemedText style={styles.buttonText}>Calcular</ThemedText>
+            </TouchableOpacity>
             <TouchableOpacity
               style={[styles.button, styles.returnButton]}
               onPress={() => setActiveButton(null)}
