@@ -466,7 +466,7 @@ export default function ButtonsPage() {
   return (
     <ScrollView style={styles.scrollContainer}>
       <ThemedView style={styles.container}>
-        <Stack.Screen options={{ title: "Buttons Demo" }} />
+        <Stack.Screen options={{ title: "Simular" }} />
         <ThemedText type="title" style={[styles.title, { marginTop: 80 }]}>
           Simule seus investimentos!
         </ThemedText>
