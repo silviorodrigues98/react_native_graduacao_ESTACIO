@@ -56,11 +56,7 @@ const HeaderImage = () => (
   <ThemedView style={styles.imageWrapper}>
     <ThemedView style={styles.imageBackground}>
       <ThemedView style={styles.imageContainer}>
-        <Image
-          source={require("../../assets/images/investimento.png")}
-          style={styles.image}
-          accessibilityLabel="Ilustração de crescimento de investimentos mostrando um gráfico ascendente com moedas"
-        />
+
       </ThemedView>
     </ThemedView>
   </ThemedView>
